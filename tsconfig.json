@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "target": "es2016",                                  
+      "lib": ["es6"],                                      
+      "module": "commonjs",                                
+      "rootDir": "src",                                    
+  
+      "resolveJsonModule": true,                          
+  
+      "allowJs": true,                                     
+      "outDir": "build",                                 
+      "esModuleInterop": true,                             
+      "forceConsistentCasingInFileNames": true,            
+      "strict": true,                                      
+      "noImplicitAny": true,       
+      "baseUrl": "src",
+      "paths": {
+        "@app/*" : ["*"]
+      }
+    },
+    "include": ["src", "index.tsx"],
+    // "extends": "./alias.json"
+  }
+  
