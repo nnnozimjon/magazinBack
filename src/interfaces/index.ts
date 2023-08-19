@@ -1,1 +1,1 @@
-export {}
+export * as dbModel from './mysql'
