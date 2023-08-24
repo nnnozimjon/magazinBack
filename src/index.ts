@@ -1,5 +1,11 @@
 import server from './app'
+import dotenv from 'dotenv'
+import path from 'path'
 
-server.listen(8002, () => {
-  console.log(`Listening on ${8002} ${''}`)
+const { parsed } = dotenv.config({
+  path: path.resolve(__dirname, '../', '.env'),
+})
+
+server.listen(parsed!.PORT, () => {
+  console.log(`Listening on ${parsed!.PORT} ${''}`)
 })
