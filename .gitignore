@@ -1,3 +1,9 @@
 node_modules
 build
-*.env
+
+# Ignore .env files
+.env
+.env.*
+
+# Ignore other environment-related files or directories
+env/
