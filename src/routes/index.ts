@@ -1,9 +1,11 @@
-import express from 'express'
+import express, { Response, Request } from 'express'
 import System from '../controllers'
 import Api from '../constants'
 
 const Router = express.Router()
 
-Router.get(Api.auth.login, System.UserAuth.login)
+Router.get('/', (req: Request, res: Response) => {
+  res.send('Development!')
+})
 
 export default Router
