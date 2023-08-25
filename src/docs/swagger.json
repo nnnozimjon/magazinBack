@@ -1,0 +1,64 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Dushanbe Market API",
+      "version": "1.0.0",
+      "description": "This is Dushanbe Market API application made with Express and documented with Swagger!"
+    },
+    "servers": [
+      {
+        "url": "https://dev-api.dushanbemarket.com"
+      },
+      {
+        "url": "https://api.dushanbemarket.com"
+      }
+    ],
+    "paths": {
+      "/api/": {
+        "get": {
+          "summary": "Get a friendly greeting",
+          "parameters": [
+            {
+              "name": "userId",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "The ID of the user"
+            },
+            {
+              "name": "sort",
+              "in": "query",
+              "required": false,
+              "type": "string",
+              "description": "Sorting option for results"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "schema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
