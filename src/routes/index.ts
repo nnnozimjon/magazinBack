@@ -1,19 +1,31 @@
 import express, { Response, Request } from 'express'
 import swaggerUi from 'swagger-ui-express'
-import swaggerDocumentOne from '../docs/swagger.json'
-// import System from '../controllers'
-// import Api from '../constants'
+import { swaggerJSON } from '../docs'
+import System from '../controllers'
+import Api from '../constants'
 
 const Router = express.Router()
 
+// Swagger API configuration!
 Router.use(
-  '/api-docs',
-  swaggerUi.serveFiles(swaggerDocumentOne),
-  swaggerUi.setup(swaggerDocumentOne, { explorer: true })
+  '/docs',
+  swaggerUi.serveFiles(swaggerJSON),
+  swaggerUi.setup(swaggerJSON, { explorer: true })
 )
 
-Router.get('/', (req: Request, res: Response) => {
-  res.send('Production!')
-})
+// Client Auth API configuration
+Router.post(Api.auth.loginCustomer, System.UserAuth.loginCustomer)
+Router.post(Api.auth.registerCustomer, System.UserAuth.registerCustomer)
+
+// Affiliate Auth API configuration
+Router.post(Api.auth.loginAffiliate, System.UserAuth.loginAffiliate)
+Router.post(
+  Api.auth.registerAffiliate,
+  System.UserAuth.registerAffiliatePartner
+)
+
+// Partner Store Auth API configuration
+Router.post(Api.auth.loginPartnerStore, System.UserAuth.loginPartnerStore)
+Router.post(Api.auth.registerPartnerStore, System.UserAuth.registerPartnerStore)
 
 export default Router
