@@ -34,15 +34,13 @@ class UserAuth {
     const validation =
       ValidatorController.validateRequiredFields(requiredFields)
     if (!validation.valid) {
-      return res.json({
-        status: 400,
+      return res.status(400).json({
         message: validation.error,
       })
     }
 
     if (!ValidatorController.isValidEmail(email)) {
-      return res.json({
-        status: 400,
+      return res.status(400).json({
         message: 'Invalid email address!',
       })
     }
@@ -57,9 +55,19 @@ class UserAuth {
         AcceptTerms: true,
       })
 
-      console.log(newStore.toJSON())
+      // Check if the store was successfully created
+      if (newStore) {
+        console.log('Store created successfully:', newStore.toJSON())
+        // Send a success response
+        res.status(201).json({ message: 'Store created successfully' })
+      } else {
+        console.log('Store creation failed')
+        // Send an error response
+        res.status(500).json({ message: 'Store creation failed' })
+      }
     } catch (error) {
       console.error('Error creating store:', error)
+      res.status(500).json({ message: 'Store creation failed' })
     }
   }
 }

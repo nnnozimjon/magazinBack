@@ -3,6 +3,7 @@ const register = {
     post: {
       tags: ['PartnerStores'],
       summary: 'Partner stores registration!',
+      consumes: 'multipart/form-data',
       parameters: [
         {
           name: 'email',
