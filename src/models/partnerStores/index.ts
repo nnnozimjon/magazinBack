@@ -14,7 +14,6 @@ class PartnerStore extends Model {
   public Password!: string
   public Currency!: 'TJS' | 'Somoni'
   public AcceptTerms!: boolean
-
   // Timestamps will be automatically added: createdAt, updatedAt
 }
 

@@ -1,4 +1,5 @@
-import express, { Response, Request } from 'express'
+import express, { Response, Request, NextFunction } from 'express'
+import Service from '../services'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerJSON } from '../docs'
 import System from '../controllers'
@@ -26,6 +27,10 @@ Router.post(
 
 // Partner Store Auth API configuration
 Router.post(Api.auth.loginPartnerStore, System.UserAuth.loginPartnerStore)
-Router.post(Api.auth.registerPartnerStore, System.UserAuth.registerPartnerStore)
+Router.post(
+  Api.auth.registerPartnerStore,
+  [Service.FileDownload.AuthFiles().any()],
+  System.UserAuth.registerPartnerStore
+)
 
 export default Router

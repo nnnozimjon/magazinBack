@@ -1,6 +1,7 @@
 import { Response, Request } from 'express'
 import ValidatorController from '../validators'
 import { PartnerStore } from '../../models/index'
+import { StringDecoder } from 'string_decoder'
 class UserAuth {
   static loginCustomer() {}
   static loginAffiliate() {}
@@ -17,8 +18,18 @@ class UserAuth {
       storeAddress,
       password,
       acceptTerms,
-    } = req.query
+    } = req.body
+    const files: any = req.files
     const currency = 'TJS'
+
+    const storeBrandLogoFile = files?.find(
+      (file: any) => file.fieldname === 'storeBrandLogo'
+    )
+    const storeHeaderPhotoFile = files?.find(
+      (file: any) => file.fieldname === 'storeHeaderPhoto'
+    )
+
+    console.log(storeHeaderPhotoFile)
 
     const requiredFields = {
       email,
@@ -29,16 +40,23 @@ class UserAuth {
       password,
       acceptTerms,
     }
-    // const { logo, headerPhoto } = req.body
 
     const validation =
       ValidatorController.validateRequiredFields(requiredFields)
+
+    if (!storeBrandLogoFile) {
+      return res.status(400).send('Brand Logo not found!')
+    }
+
+    if (!storeHeaderPhotoFile) {
+      return res.status(400).send('Brand Header photo not found!')
+    }
+
     if (!validation.valid) {
       return res.status(400).json({
         message: validation.error,
       })
     }
-
     if (!ValidatorController.isValidEmail(email)) {
       return res.status(400).json({
         message: 'Invalid email address!',
@@ -47,14 +65,18 @@ class UserAuth {
 
     try {
       const newStore: PartnerStore = await PartnerStore.create({
-        Name: 'Example Store',
-        Email: 'store@example.com',
+        Name: storeName,
+        Email: email,
         BrandName: 'Example Brand',
-        Password: 'securePassword',
-        Currency: 'TJS',
+        Password: password,
+        StoreAddress: storeAddress,
+        PhoneNumber: phoneNumber,
+        CityAddress: city,
+        Currency: currency,
         AcceptTerms: true,
+        BrandIconURL: storeBrandLogoFile?.filename,
+        HeaderPhotoURL: storeHeaderPhotoFile?.filename,
       })
-
       // Check if the store was successfully created
       if (newStore) {
         console.log('Store created successfully:', newStore.toJSON())
