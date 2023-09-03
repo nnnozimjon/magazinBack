@@ -1,14 +1,38 @@
 import { Response, Request } from 'express'
 import ValidatorController from '../validators'
 import { PartnerStore } from '../../models/index'
-import { StringDecoder } from 'string_decoder'
+import fs from 'fs/promises'
+import path from 'path'
+
 class UserAuth {
+  static async deleteFile(filename: any) {
+    if (filename) {
+      const filePath = path.resolve(
+        __dirname,
+        `../../assets/partnerStoresImages/${filename.filename}`
+      )
+      await fs.unlink(filePath)
+    }
+  }
+
+  static async handleRegistrationError(
+    res: Response,
+    storeBrandLogoFile: any,
+    storeHeaderPhotoFile: any,
+    errorMessage: string
+  ) {
+    await UserAuth.deleteFile(storeBrandLogoFile)
+    await UserAuth.deleteFile(storeHeaderPhotoFile)
+    res.status(400).json({ code: res.statusCode, message: errorMessage })
+  }
+
   static loginCustomer() {}
   static loginAffiliate() {}
   static loginPartnerStore() {}
 
   static registerCustomer() {}
   static registerAffiliatePartner() {}
+
   static async registerPartnerStore(req: Request, res: Response) {
     const {
       email,
@@ -19,17 +43,14 @@ class UserAuth {
       password,
       acceptTerms,
     } = req.body
+
     const files: any = req.files
     const currency = 'TJS'
 
-    const storeBrandLogoFile = files?.find(
-      (file: any) => file.fieldname === 'storeBrandLogo'
-    )
-    const storeHeaderPhotoFile = files?.find(
-      (file: any) => file.fieldname === 'storeHeaderPhoto'
-    )
-
-    console.log(storeHeaderPhotoFile)
+    const storeBrandLogoFile =
+      files && files['storeBrandLogo'] ? files['storeBrandLogo'][0] : null
+    const storeHeaderPhotoFile =
+      files && files['storeHeaderPhoto'] ? files['storeHeaderPhoto'][0] : null
 
     const requiredFields = {
       email,
@@ -44,30 +65,37 @@ class UserAuth {
     const validation =
       ValidatorController.validateRequiredFields(requiredFields)
 
-    if (!storeBrandLogoFile) {
-      return res.status(400).send('Brand Logo not found!')
-    }
-
-    if (!storeHeaderPhotoFile) {
-      return res.status(400).send('Brand Header photo not found!')
+    if (!storeBrandLogoFile || !storeHeaderPhotoFile) {
+      return UserAuth.handleRegistrationError(
+        res,
+        storeBrandLogoFile,
+        storeHeaderPhotoFile,
+        'Required files are missing!'
+      )
     }
 
     if (!validation.valid) {
-      return res.status(400).json({
-        message: validation.error,
-      })
+      return UserAuth.handleRegistrationError(
+        res,
+        storeBrandLogoFile,
+        storeHeaderPhotoFile,
+        validation.error
+      )
     }
+
     if (!ValidatorController.isValidEmail(email)) {
-      return res.status(400).json({
-        message: 'Invalid email address!',
-      })
+      return UserAuth.handleRegistrationError(
+        res,
+        storeBrandLogoFile,
+        storeHeaderPhotoFile,
+        'Invalid email address!'
+      )
     }
 
     try {
       const newStore: PartnerStore = await PartnerStore.create({
         Name: storeName,
         Email: email,
-        BrandName: 'Example Brand',
         Password: password,
         StoreAddress: storeAddress,
         PhoneNumber: phoneNumber,
@@ -77,19 +105,46 @@ class UserAuth {
         BrandIconURL: storeBrandLogoFile?.filename,
         HeaderPhotoURL: storeHeaderPhotoFile?.filename,
       })
+
       // Check if the store was successfully created
       if (newStore) {
-        console.log('Store created successfully:', newStore.toJSON())
-        // Send a success response
-        res.status(201).json({ message: 'Store created successfully' })
+        res.status(200).json({
+          code: 200,
+          message: 'Магазин успешно создан!',
+        })
       } else {
-        console.log('Store creation failed')
-        // Send an error response
-        res.status(500).json({ message: 'Store creation failed' })
+        return UserAuth.handleRegistrationError(
+          res,
+          storeBrandLogoFile,
+          storeHeaderPhotoFile,
+          'Не удалось создать магазин.'
+        )
       }
-    } catch (error) {
-      console.error('Error creating store:', error)
-      res.status(500).json({ message: 'Store creation failed' })
+    } catch (error: any) {
+      let errorMessage = 'Не удалось создать магазин!'
+
+      if (error.errors[0]?.type === 'unique violation') {
+        switch (error.errors[0]?.path) {
+          case 'Name':
+            errorMessage = 'Магазин с таким названием существует!'
+            break
+          case 'Email':
+            errorMessage = 'Магазин с таким электронным адресом существует!'
+            break
+          default:
+            errorMessage = 'Магазин с таким номер телефона существует!'
+            break
+        }
+      } else {
+        errorMessage = 'Ошибка при создании магазина: ' + error.message
+      }
+
+      return UserAuth.handleRegistrationError(
+        res,
+        storeBrandLogoFile,
+        storeHeaderPhotoFile,
+        errorMessage
+      )
     }
   }
 }

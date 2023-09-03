@@ -29,7 +29,13 @@ Router.post(
 Router.post(Api.auth.loginPartnerStore, System.UserAuth.loginPartnerStore)
 Router.post(
   Api.auth.registerPartnerStore,
-  [Service.FileDownload.AuthFiles().any()],
+  [
+    // Service.FileDownload.AuthFiles().any(),
+    Service.FileDownload.AuthFiles().fields([
+      { name: 'storeBrandLogo', maxCount: 1 },
+      { name: 'storeHeaderPhoto', maxCount: 1 },
+    ]),
+  ],
   System.UserAuth.registerPartnerStore
 )
 

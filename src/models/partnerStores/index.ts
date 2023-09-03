@@ -6,7 +6,6 @@ class PartnerStore extends Model {
   public Name!: string
   public Email!: string
   public PhoneNumber!: string | null
-  public BrandName!: string
   public BrandIconURL!: string | null
   public HeaderPhotoURL!: string | null
   public CityAddress!: string | null
@@ -36,10 +35,7 @@ PartnerStore.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    BrandName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
+
     BrandIconURL: {
       type: DataTypes.STRING,
       allowNull: true,
