@@ -3,7 +3,8 @@ import sequelize from '../../config/db/index'
 
 class PartnerStore extends Model {
   public StoreID!: number
-  public Name!: string
+  public StoreName!: string
+  public Username!: string
   public Email!: string
   public PhoneNumber!: string | null
   public BrandIconURL!: string | null
@@ -23,7 +24,11 @@ PartnerStore.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    Name: {
+    StoreName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Username: {
       type: DataTypes.STRING,
       allowNull: false,
     },

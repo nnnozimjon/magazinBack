@@ -1,16 +1,22 @@
 const Api = {
   auth: {
     // Client
-    loginCustomer: '/api/customers/login',
-    registerCustomer: '/api/customers/register',
+    loginCustomer: '/api/v1/customers/login',
+    registerCustomer: '/api/v1/customers/register',
 
     // Affiliate
-    loginAffiliate: '/api/affiliates/login',
-    registerAffiliate: '/api/affiliates/register',
+    loginAffiliate: '/api/v1/affiliates/login',
+    registerAffiliate: '/api/v1/affiliates/register',
 
     // Store
-    loginPartnerStore: '/api/partnerStores/login',
-    registerPartnerStore: '/api/partnerStores/register',
+    loginPartnerStore: '/api/v1/partnerStores/login',
+    registerPartnerStore: '/api/v1/partnerStores/register',
+  },
+
+  product: {
+    partnerStore: {
+      createProduct: '/api/v1/product/partnerStore/createProduct',
+    },
   },
 }
 

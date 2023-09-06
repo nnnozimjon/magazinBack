@@ -1,5 +1,6 @@
 import UserAuth from './Auth'
+import StoreProduct from './StoreProduct'
 
-const System = { UserAuth }
+const System = { UserAuth, StoreProduct }
 
 export default System

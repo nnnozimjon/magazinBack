@@ -39,4 +39,10 @@ Router.post(
   System.UserAuth.registerPartnerStore
 )
 
+// Partner Store Products API
+Router.post(
+  Api.product.partnerStore.createProduct,
+  System.StoreProduct.createProduct
+)
+
 export default Router

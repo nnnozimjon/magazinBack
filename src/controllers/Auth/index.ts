@@ -1,34 +1,72 @@
 import { Response, Request } from 'express'
 import ValidatorController from '../validators'
 import { PartnerStore } from '../../models/index'
-import fs from 'fs/promises'
-import path from 'path'
+import bcrypt from 'bcrypt'
 
 class UserAuth {
-  static async deleteFile(filename: any) {
-    if (filename) {
-      const filePath = path.resolve(
-        __dirname,
-        `../../assets/partnerStoresImages/${filename.filename}`
-      )
-      await fs.unlink(filePath)
-    }
-  }
-
   static async handleRegistrationError(
     res: Response,
     storeBrandLogoFile: any,
     storeHeaderPhotoFile: any,
     errorMessage: string
   ) {
-    await UserAuth.deleteFile(storeBrandLogoFile)
-    await UserAuth.deleteFile(storeHeaderPhotoFile)
+    await ValidatorController.deleteFile(
+      storeBrandLogoFile,
+      'partnerStoresImages'
+    )
+    await ValidatorController.deleteFile(
+      storeHeaderPhotoFile,
+      'partnerStoresImages'
+    )
     res.status(400).json({ code: res.statusCode, message: errorMessage })
   }
 
   static loginCustomer() {}
   static loginAffiliate() {}
-  static loginPartnerStore() {}
+
+  static async loginPartnerStore(req: Request, res: Response) {
+    const { storeName, password } = req.body
+
+    try {
+      // Check if required fields are provided
+      const requiredFields = { storeName, password }
+      const validation =
+        ValidatorController.validateRequiredFields(requiredFields)
+
+      if (!validation.valid) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Required fields are missing!',
+        })
+      }
+
+      // Check if the store is valid and get the store details
+      const store = await ValidatorController.isStoreValid(
+        res,
+        storeName,
+        password
+      )
+
+      if (!store) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Invalid store credentials!',
+        })
+      }
+
+      // If the credentials are valid, you can proceed with further actions
+      res.json({
+        code: 200,
+        accessToken: '',
+        message: 'Store logged in successfully!',
+      })
+    } catch (error) {
+      return res.status(500).json({
+        code: 500,
+        message: 'Internal server error',
+      })
+    }
+  }
 
   static registerCustomer() {}
   static registerAffiliatePartner() {}
@@ -38,6 +76,7 @@ class UserAuth {
       email,
       phoneNumber,
       storeName,
+      username,
       city,
       storeAddress,
       password,
@@ -56,6 +95,7 @@ class UserAuth {
       email,
       phoneNumber,
       storeName,
+      username,
       city,
       storeAddress,
       password,
@@ -92,11 +132,14 @@ class UserAuth {
       )
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10)
+
     try {
       const newStore: PartnerStore = await PartnerStore.create({
-        Name: storeName,
+        StoreName: storeName,
+        Username: username,
         Email: email,
-        Password: password,
+        Password: hashedPassword,
         StoreAddress: storeAddress,
         PhoneNumber: phoneNumber,
         CityAddress: city,
@@ -125,7 +168,7 @@ class UserAuth {
 
       if (error.errors[0]?.type === 'unique violation') {
         switch (error.errors[0]?.path) {
-          case 'Name':
+          case 'StoreName':
             errorMessage = 'Магазин с таким названием существует!'
             break
           case 'Email':
