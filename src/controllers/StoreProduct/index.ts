@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import ValidatorController from '../validators'
-import { StoreProductModel } from '../../models/index'
+import { PartnerStore, StoreProductModel } from '../../models/index'
+import jwt from 'jsonwebtoken'
+import { partnerStoreSecretKey } from '../../common/token'
 
 class StoreProduct {
   static async createProduct(req: Request, res: Response) {
@@ -51,6 +53,47 @@ class StoreProduct {
       return res.status(500).json({
         code: 500,
         message: error,
+      })
+    }
+  }
+
+  static async getProducts(req: Request, res: Response) {
+    try {
+      const token: string = req.headers.authorization || ''
+
+      const tokenValue = token.split(' ')[1]
+
+      const decodedToken: any = jwt.verify(
+        tokenValue,
+        partnerStoreSecretKey,
+        (err, decoded) => {
+          if (err) {
+            res.status(401).json({
+              code: 401,
+              message: 'Unauthorized: Invalid token!',
+            })
+          }
+
+          return decoded
+        }
+      )
+
+      const userId = decodedToken.StoreID
+
+      const store = await PartnerStore.findByPk(userId)
+
+      const products = await StoreProductModel.findAll({
+        where: {
+          storeID: userId,
+        },
+      })
+
+      res.json(products)
+    } catch (error) {
+      console.error('Error:', error)
+      res.status(500).json({
+        code: 500,
+        message: 'Internal server error',
       })
     }
   }

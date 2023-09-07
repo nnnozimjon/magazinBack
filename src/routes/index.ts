@@ -4,6 +4,7 @@ import swaggerUi from 'swagger-ui-express'
 import { swaggerJSON } from '../docs'
 import System from '../controllers'
 import Api from '../constants'
+import verifyToken from '../controllers/Token'
 
 const Router = express.Router()
 
@@ -43,6 +44,11 @@ Router.post(
 Router.post(
   Api.product.partnerStore.createProduct,
   System.StoreProduct.createProduct
+)
+Router.get(
+  Api.product.partnerStore.getProducts,
+  [verifyToken],
+  System.StoreProduct.getProducts
 )
 
 export default Router

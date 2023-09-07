@@ -16,6 +16,7 @@ const Api = {
   product: {
     partnerStore: {
       createProduct: '/api/v1/product/partnerStore/createProduct',
+      getProducts: '/api/v1/product/partnerStore/getProducts',
     },
   },
 }

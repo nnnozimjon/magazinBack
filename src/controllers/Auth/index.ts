@@ -1,6 +1,8 @@
 import { Response, Request } from 'express'
 import ValidatorController from '../validators'
 import { PartnerStore } from '../../models/index'
+import { partnerStoreSecretKey } from '../../common/token'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 class UserAuth {
@@ -25,9 +27,8 @@ class UserAuth {
   static loginAffiliate() {}
 
   static async loginPartnerStore(req: Request, res: Response) {
-    const { storeName, password } = req.body
-
     try {
+      const { storeName, password } = req.body
       // Check if required fields are provided
       const requiredFields = { storeName, password }
       const validation =
@@ -41,7 +42,7 @@ class UserAuth {
       }
 
       // Check if the store is valid and get the store details
-      const store = await ValidatorController.isStoreValid(
+      const store: any = await ValidatorController.isStoreValid(
         res,
         storeName,
         password
@@ -53,11 +54,21 @@ class UserAuth {
           message: 'Invalid store credentials!',
         })
       }
-
+      const token = await jwt.sign(
+        {
+          StoreID: store.StoreID,
+          StoreName: store.StoreName,
+          Username: store.Username,
+        },
+        partnerStoreSecretKey,
+        {
+          expiresIn: '3d',
+        }
+      )
       // If the credentials are valid, you can proceed with further actions
       res.json({
         code: 200,
-        accessToken: '',
+        accessToken: token,
         message: 'Store logged in successfully!',
       })
     } catch (error) {
