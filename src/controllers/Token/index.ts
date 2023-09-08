@@ -9,7 +9,7 @@ function verifyToken(req: Request, res: Response, next: NextFunction) {
   if (!tokenHeader || !tokenHeader.startsWith('Bearer ')) {
     return res.status(401).json({
       code: 401,
-      message: 'Unauthorized: Bearer token missing',
+      message: 'Неавторизованный!',
     })
   }
 
@@ -21,12 +21,9 @@ function verifyToken(req: Request, res: Response, next: NextFunction) {
     if (err) {
       return res.status(401).json({
         code: 401,
-        message: 'Unauthorized: Invalid token',
+        message: 'Неавторизованный!',
       })
     }
-
-    // If the token is valid, you can access the decoded payload in the 'decoded' variable
-    console.log(decoded)
 
     // Proceed to the next middleware or route handler
     next()

@@ -1,8 +1,10 @@
 import { PartnerStore } from '../../models/index'
 import { Response } from 'express'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import fs from 'fs/promises'
 import path from 'path'
+import { partnerStoreSecretKey } from '../../common/token'
 
 class ValidatorController {
   static isValidEmail(email: any) {
@@ -19,7 +21,7 @@ class ValidatorController {
   } {
     for (const key in fields) {
       if (!fields[key]) {
-        return { valid: false, error: `${key} required!` }
+        return { valid: false, error: `${key} требуется!` }
       }
     }
     return { valid: true, error: '' }
@@ -37,17 +39,17 @@ class ValidatorController {
     return usernameRegex.test(username)
   }
 
-  static async deleteFile(filename: any, folder: string) {
-    if (filename) {
+  static async deleteFile(file: any, folder: string) {
+    if (file) {
       const filePath = path.resolve(
         __dirname,
-        `../../assets/${folder}/${filename.filename}`
+        `../../assets/${folder}/${file?.filename}`
       )
       await fs.unlink(filePath)
     }
   }
 
-  static async isStoreValid(
+  static async isStoreCredentialValid(
     res: Response,
     storeName: string,
     password: string
@@ -76,6 +78,38 @@ class ValidatorController {
         code: 500,
         message: err.message,
       })
+    }
+  }
+
+  static getTokenData(
+    token: string,
+    res: Response
+  ): {
+    storeID: string
+    storeName: string
+    username: string
+  } {
+    const tokenValue = token.split(' ')[1]
+
+    const decodedToken: any = jwt.verify(
+      tokenValue,
+      partnerStoreSecretKey,
+      (err, decoded) => {
+        if (err) {
+          res.status(401).json({
+            code: 401,
+            message: 'Неавторизованный!',
+          })
+        }
+
+        return decoded
+      }
+    )
+
+    return {
+      storeID: decodedToken.StoreID,
+      storeName: decodedToken.StoreName,
+      username: decodedToken.Username,
     }
   }
 }

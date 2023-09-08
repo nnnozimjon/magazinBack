@@ -1,29 +1,125 @@
 import { Request, Response } from 'express'
 import ValidatorController from '../validators'
-import { PartnerStore, StoreProductModel } from '../../models/index'
-import jwt from 'jsonwebtoken'
-import { partnerStoreSecretKey } from '../../common/token'
+import { StoreProductModel } from '../../models/index'
 
 class StoreProduct {
   static async createProduct(req: Request, res: Response) {
-    const { name, description, price, category, color, size } = req.body
-
-    const requiredFields = {
+    const token = req.headers.authorization || ''
+    const { storeID } = ValidatorController.getTokenData(token, res)
+    const {
       name,
       description,
       price,
       category,
+      color,
       size,
+      stockQuantity,
+      discount,
+    } = req.body
+
+    const requiredFields = {
+      name,
+      description,
+      stockQuantity,
+      price,
+      category,
     }
 
     const files: any = req.files
-    const storeFiles = files && files['files']
+    const storeFiles = files && files['file']
 
     const validation =
       ValidatorController.validateRequiredFields(requiredFields)
 
+    if (!storeFiles || !Array.isArray(storeFiles) || storeFiles.length === 0) {
+      return res.json({
+        code: 400,
+        message: 'Требуется минимум одна фотография товара!',
+      })
+    }
+
     if (!validation.valid) {
-      ValidatorController.deleteFile('', 'storeProducts')
+      for (let i = 0; i <= storeFiles.length - 1; i++) {
+        ValidatorController.deleteFile(storeFiles[i], 'storeProductsImages')
+      }
+      return res.status(400).json({
+        code: 400,
+        message: validation.error,
+      })
+    }
+
+    const images = storeFiles.map(file => {
+      return file?.filename
+    })
+
+    try {
+      const newProduct = await StoreProductModel.create({
+        ProductName: name,
+        Description: description,
+        Price: price,
+        Discount: discount,
+        CategoryID: category,
+        StockQuantity: stockQuantity,
+        Images: images,
+        storeID: storeID,
+        Size: size,
+        Color: color,
+      })
+
+      if (newProduct) {
+        res.status(200).json({
+          code: 200,
+          message: 'Продукт успешно создан!!',
+        })
+      } else {
+        for (let i = 0; i <= storeFiles.length - 1; i++) {
+          ValidatorController.deleteFile(storeFiles[i], 'storeProductsImages')
+        }
+        res.status(500).json({
+          code: 500,
+          message: 'Внутренняя ошибка сервера!',
+        })
+      }
+    } catch (error) {
+      for (let i = 0; i <= storeFiles.length - 1; i++) {
+        ValidatorController.deleteFile(storeFiles[i], 'storeProductsImages')
+      }
+      return res.status(500).json({
+        code: 500,
+        message: error,
+      })
+    }
+  }
+
+  static async editProduct(req: Request, res: Response) {
+    const token = req.headers.authorization || ''
+    const { storeID } = ValidatorController.getTokenData(token, res)
+    const {
+      name,
+      description,
+      price,
+      category,
+      color,
+      size,
+      stockQuantity,
+      discount,
+      productID,
+    } = req.body
+
+    const requiredFields = {
+      name,
+      description,
+      stockQuantity,
+      price,
+      category,
+      productID,
+    }
+
+    // fields validation
+    const validation =
+      ValidatorController.validateRequiredFields(requiredFields)
+
+    if (!validation.valid) {
       return res.status(400).json({
         code: 400,
         message: validation.error,
@@ -31,22 +127,35 @@ class StoreProduct {
     }
 
     try {
-      const newProduct = await StoreProductModel.create({
-        ProductName: 'Pro1',
-        Description: 'Fucking',
-        Price: 190.99,
-        StockQuantity: 10,
-        CategoryID: 1,
-        Images: [],
-        storeID: 53,
-        Size: [],
-        Color: [],
-      })
+      const updatedProduct = await StoreProductModel.update(
+        {
+          ProductName: name,
+          Description: description,
+          Price: price,
+          Discount: discount,
+          CategoryID: category,
+          StockQuantity: stockQuantity,
+          storeID: storeID,
+          Size: size,
+          Color: color,
+        },
+        {
+          where: { id: productID },
+          returning: true,
+        }
+      )
 
-      if (newProduct) {
+      console.log(updatedProduct, 'uppps')
+
+      if (updatedProduct) {
         res.status(200).json({
           code: 200,
-          message: 'Product created successfully!',
+          message: 'Продукт успешно изменен!',
+        })
+      } else {
+        res.status(500).json({
+          code: 500,
+          message: 'Внутренняя ошибка сервера!',
         })
       }
     } catch (error) {
@@ -56,35 +165,16 @@ class StoreProduct {
       })
     }
   }
+  static async deleteProduct() {}
 
   static async getProducts(req: Request, res: Response) {
     try {
-      const token: string = req.headers.authorization || ''
-
-      const tokenValue = token.split(' ')[1]
-
-      const decodedToken: any = jwt.verify(
-        tokenValue,
-        partnerStoreSecretKey,
-        (err, decoded) => {
-          if (err) {
-            res.status(401).json({
-              code: 401,
-              message: 'Unauthorized: Invalid token!',
-            })
-          }
-
-          return decoded
-        }
-      )
-
-      const userId = decodedToken.StoreID
-
-      const store = await PartnerStore.findByPk(userId)
+      const token = req.headers.authorization || ''
+      const { storeID } = ValidatorController.getTokenData(token, res)
 
       const products = await StoreProductModel.findAll({
         where: {
-          storeID: userId,
+          storeID: storeID,
         },
       })
 
@@ -93,7 +183,7 @@ class StoreProduct {
       console.error('Error:', error)
       res.status(500).json({
         code: 500,
-        message: 'Internal server error',
+        message: 'Внутренняя ошибка сервера!',
       })
     }
   }

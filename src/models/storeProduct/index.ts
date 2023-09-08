@@ -12,6 +12,7 @@ class StoreProductModel extends Model {
   public storeID!: number
   public Size?: string[]
   public Color?: string[]
+  public Discount?: number
 
   static associate(models: any) {
     StoreProductModel.belongsTo(models.PartnerStore, {
@@ -39,6 +40,14 @@ StoreProductModel.init(
       allowNull: false,
     },
     Price: {
+      type: INTEGER,
+      allowNull: false,
+    },
+    Discount: {
+      type: INTEGER,
+      allowNull: true,
+    },
+    CategoryID: {
       type: INTEGER,
       allowNull: false,
     },

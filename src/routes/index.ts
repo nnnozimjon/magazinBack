@@ -43,6 +43,10 @@ Router.post(
 // Partner Store Products API
 Router.post(
   Api.product.partnerStore.createProduct,
+  [
+    verifyToken,
+    Service.FileDownload.ProductPhoto().fields([{ name: 'file', maxCount: 3 }]),
+  ],
   System.StoreProduct.createProduct
 )
 Router.get(

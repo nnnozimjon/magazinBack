@@ -26,23 +26,27 @@ class UserAuth {
   static loginCustomer() {}
   static loginAffiliate() {}
 
+  static registerCustomer() {}
+  static registerAffiliatePartner() {}
+
+  // PARTNER AUTH CONTROLLER
+
   static async loginPartnerStore(req: Request, res: Response) {
     try {
       const { storeName, password } = req.body
-      // Check if required fields are provided
       const requiredFields = { storeName, password }
+
       const validation =
         ValidatorController.validateRequiredFields(requiredFields)
 
       if (!validation.valid) {
         return res.status(400).json({
           code: 400,
-          message: 'Required fields are missing!',
+          message: 'Отсутствуют обязательные поля!',
         })
       }
 
-      // Check if the store is valid and get the store details
-      const store: any = await ValidatorController.isStoreValid(
+      const store: any = await ValidatorController.isStoreCredentialValid(
         res,
         storeName,
         password
@@ -51,7 +55,7 @@ class UserAuth {
       if (!store) {
         return res.status(400).json({
           code: 400,
-          message: 'Invalid store credentials!',
+          message: 'Неверные учетные данные!',
         })
       }
       const token = await jwt.sign(
@@ -65,22 +69,17 @@ class UserAuth {
           expiresIn: '3d',
         }
       )
-      // If the credentials are valid, you can proceed with further actions
       res.json({
         code: 200,
         accessToken: token,
-        message: 'Store logged in successfully!',
       })
     } catch (error) {
       return res.status(500).json({
         code: 500,
-        message: 'Internal server error',
+        message: 'Внутренняя ошибка сервера!',
       })
     }
   }
-
-  static registerCustomer() {}
-  static registerAffiliatePartner() {}
 
   static async registerPartnerStore(req: Request, res: Response) {
     const {
@@ -121,7 +120,7 @@ class UserAuth {
         res,
         storeBrandLogoFile,
         storeHeaderPhotoFile,
-        'Required files are missing!'
+        'Необходимые файлы отсутствуют!'
       )
     }
 
@@ -139,7 +138,7 @@ class UserAuth {
         res,
         storeBrandLogoFile,
         storeHeaderPhotoFile,
-        'Invalid email address!'
+        'Неверный адрес электронной почты!'
       )
     }
 
@@ -160,7 +159,6 @@ class UserAuth {
         HeaderPhotoURL: storeHeaderPhotoFile?.filename,
       })
 
-      // Check if the store was successfully created
       if (newStore) {
         res.status(200).json({
           code: 200,
