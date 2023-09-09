@@ -85,7 +85,7 @@ class ValidatorController {
     token: string,
     res: Response
   ): {
-    storeID: string
+    storeID: number
     storeName: string
     username: string
   } {

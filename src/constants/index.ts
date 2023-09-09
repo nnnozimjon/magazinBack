@@ -16,7 +16,8 @@ const Api = {
   product: {
     partnerStore: {
       createProduct: '/api/v1/product/partnerStore/createProduct',
-      editProduct: '/api/v1/product/partnerStore/editProduct/?id=',
+      editProduct: '/api/v1/product/partnerStore/editProduct',
+      deleteProduct: '/api/v1/product/partnerStore/deleteProduct',
       getProducts: '/api/v1/product/partnerStore/getProducts',
     },
   },

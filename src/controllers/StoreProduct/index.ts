@@ -94,7 +94,7 @@ class StoreProduct {
   static async editProduct(req: Request, res: Response) {
     const token = req.headers.authorization || ''
     const { storeID } = ValidatorController.getTokenData(token, res)
-    const { productID } = req.params
+    const { id: productID } = req.params
     const {
       name,
       description,
@@ -164,7 +164,38 @@ class StoreProduct {
     }
   }
 
-  static async deleteProduct() {}
+  static async deleteProduct(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization || ''
+      const { storeID } = ValidatorController.getTokenData(token, res)
+      const { id: productID } = req.params
+
+      // Use StoreProductModel to retrieve the product
+      const product = await StoreProductModel.findByPk(productID)
+
+      // Check if the product exists
+      if (!product) {
+        return res.status(404).json({ error: 'Product not found' })
+      }
+
+      // Check if the product belongs to the store
+      if (product.storeID !== storeID) {
+        return res
+          .status(403)
+          .json({ error: 'Unauthorized to delete this product' })
+      }
+
+      // Delete the product
+      await product.destroy()
+
+      // Respond with a success status
+      return res.status(204).send()
+    } catch (error) {
+      // Handle any errors (e.g., database errors, validation errors)
+      console.error(error)
+      return res.status(500).json({ error: 'Internal Server Error' })
+    }
+  }
 
   static async getProducts(req: Request, res: Response) {
     try {

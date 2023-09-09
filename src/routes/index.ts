@@ -55,6 +55,13 @@ Router.put(
   [verifyToken],
   System.StoreProduct.editProduct
 )
+
+Router.delete(
+  Api.product.partnerStore.deleteProduct,
+  [verifyToken],
+  System.StoreProduct.deleteProduct
+)
+
 Router.get(
   Api.product.partnerStore.getProducts,
   [verifyToken],
