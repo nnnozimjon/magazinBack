@@ -49,6 +49,12 @@ Router.post(
   ],
   System.StoreProduct.createProduct
 )
+
+Router.put(
+  Api.product.partnerStore.editProduct,
+  [verifyToken],
+  System.StoreProduct.editProduct
+)
 Router.get(
   Api.product.partnerStore.getProducts,
   [verifyToken],

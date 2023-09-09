@@ -94,6 +94,7 @@ class StoreProduct {
   static async editProduct(req: Request, res: Response) {
     const token = req.headers.authorization || ''
     const { storeID } = ValidatorController.getTokenData(token, res)
+    const { productID } = req.params
     const {
       name,
       description,
@@ -103,7 +104,6 @@ class StoreProduct {
       size,
       stockQuantity,
       discount,
-      productID,
     } = req.body
 
     const requiredFields = {
@@ -145,8 +145,6 @@ class StoreProduct {
         }
       )
 
-      console.log(updatedProduct, 'uppps')
-
       if (updatedProduct) {
         res.status(200).json({
           code: 200,
@@ -165,6 +163,7 @@ class StoreProduct {
       })
     }
   }
+
   static async deleteProduct() {}
 
   static async getProducts(req: Request, res: Response) {
