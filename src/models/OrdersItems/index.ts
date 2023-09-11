@@ -6,6 +6,7 @@ import ProductsModel from '../storeProduct' // Import the ProductsModel for the 
 class OrderItemsModel extends Model {
   public OrderItemID!: number
   public OrderID!: number
+  public storeID!: number
   public ProductID!: number
   public Quantity!: number
   public Subtotal!: number

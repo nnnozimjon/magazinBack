@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
-import { StoreProductModel } from '../../models/index'
 import ValidatorController from '../validators'
+import { StoreProductModel, PaymentsModel, OrderItemsModel } from '../../models'
 
 class Dashboard {
   static getSoldProductQuantity(req: Request, res: Response) {
@@ -23,10 +23,10 @@ class Dashboard {
       })
     }
 
-    // from  yyyy-MM-dd to yyyy-MM-dd
-    // I want to get the sold quantity
+    // return numberOfSoldItems, priceOfSoldItems
+
+    // check if dateFrom is not greater than dateTo
   }
-  static getSoldProductsMoney() {}
 }
 
 export default Dashboard
