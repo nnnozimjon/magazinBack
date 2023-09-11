@@ -1,5 +1,5 @@
 const register = {
-  '/api/partnerStores/register': {
+  '/partnerStores/register': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Partner stores registration!',
@@ -47,12 +47,12 @@ const register = {
         },
         {
           name: 'storeBrandLogo',
-          in: 'query',
+          in: 'file',
           type: 'multipart/form-data',
         },
         {
           name: 'storeHeaderPhoto',
-          in: 'query',
+          in: 'file',
           type: 'multipart/form-data',
         },
       ],
@@ -62,7 +62,7 @@ const register = {
 }
 
 const login = {
-  '/api/partnerStores/login': {
+  '/partnerStores/login': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Partner Stores login form',
@@ -83,8 +83,159 @@ const login = {
   },
 }
 
+const createProduct = {
+  '/partnerStore/createProduct': {
+    post: {
+      tags: ['PartnerStores'],
+      summary: 'Create product',
+      consumes: 'multipart/form-data',
+      parameters: [
+        {
+          name: 'name',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'description',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'price',
+          in: 'query',
+          type: 'number', // Assuming price is a number
+          required: true,
+        },
+        {
+          name: 'category',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'color',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'size',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'stockQuantity',
+          in: 'query',
+          type: 'number', // Assuming stockQuantity is a number
+          required: true,
+        },
+        {
+          name: 'discount',
+          in: 'query',
+          type: 'number', // Assuming discount is a number
+        },
+        {
+          name: 'file',
+          in: 'form-data',
+          type: 'file',
+          required: true,
+          description: 'Upload file',
+        },
+      ],
+      responses: {},
+    },
+  },
+}
+
+const editProduct = {
+  '/partnerStore/editProduct': {
+    post: {
+      tags: ['PartnerStores'],
+      summary: 'Edit product!',
+      consumes: 'multipart/form-data',
+      parameters: [
+        {
+          name: 'id',
+          in: 'params',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'name',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'description',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'price',
+          in: 'query',
+          type: 'number', // Assuming price is a number
+          required: true,
+        },
+        {
+          name: 'category',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'color',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'size',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'stockQuantity',
+          in: 'query',
+          type: 'number', // Assuming stockQuantity is a number
+          required: true,
+        },
+        {
+          name: 'discount',
+          in: 'query',
+          type: 'number', // Assuming discount is a number
+        },
+      ],
+      responses: {},
+    },
+  },
+}
+
+const deleteProduct = {
+  '/partnerStore/deleteProduct': {
+    post: {
+      tags: ['PartnerStores'],
+      summary: 'Delete Product!',
+      consumes: 'multipart/form-data',
+      parameters: [
+        {
+          name: 'id',
+          in: 'params',
+          type: 'string',
+          required: true,
+        },
+      ],
+      responses: {},
+    },
+  },
+}
+
 const PartnerStores = {
   ...register,
   ...login,
+  ...createProduct,
+  ...editProduct,
+  ...deleteProduct,
 }
 export default PartnerStores

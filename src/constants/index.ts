@@ -13,12 +13,19 @@ const Api = {
     registerPartnerStore: '/api/v1/partnerStores/register',
   },
 
+  dashboard: {
+    partnerStores: {
+      soldProductsCount: '/api/v1/dashboard/partnerStores/sold-products-count',
+      soldProductsPrice: '/api/v1/dashboard/partnerStores/sold-products-price',
+    },
+  },
+
   product: {
     partnerStore: {
-      createProduct: '/api/v1/product/partnerStore/createProduct',
-      editProduct: '/api/v1/product/partnerStore/editProduct',
-      deleteProduct: '/api/v1/product/partnerStore/deleteProduct',
-      getProducts: '/api/v1/product/partnerStore/getProducts',
+      createProduct: '/api/v1/product/partnerStore/create-product',
+      editProduct: '/api/v1/product/partnerStore/edit-product',
+      deleteProduct: '/api/v1/product/partnerStore/delete-product',
+      getProducts: '/api/v1/product/partnerStore/get-products',
     },
   },
 }

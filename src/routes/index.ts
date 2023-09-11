@@ -68,4 +68,11 @@ Router.get(
   System.StoreProduct.getProducts
 )
 
+// Partner Store Dashboard API
+Router.post(
+  Api.dashboard.partnerStores.soldProductsCount,
+  [verifyToken],
+  System.Dashboard.getSoldProductQuantity
+)
+
 export default Router

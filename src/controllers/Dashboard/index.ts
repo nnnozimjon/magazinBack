@@ -1,9 +1,15 @@
 import { Request, Response } from 'express'
 import ValidatorController from '../validators'
-import { StoreProductModel, PaymentsModel, OrderItemsModel } from '../../models'
+import {
+  PaymentsModel,
+  OrderItemsModel,
+  OrdersModel,
+  StoreProductModel,
+} from '../../models'
+import { Op } from 'sequelize'
 
 class Dashboard {
-  static getSoldProductQuantity(req: Request, res: Response) {
+  static async getSoldProductQuantity(req: Request, res: Response) {
     const token = req.headers.authorization || ''
     const { storeID } = ValidatorController.getTokenData(token, res)
     const { dateFrom, dateTo } = req.body
@@ -23,9 +29,55 @@ class Dashboard {
       })
     }
 
-    // return numberOfSoldItems, priceOfSoldItems
+    try {
+      const soldProducts = await OrderItemsModel.findAll({
+        where: {},
+        include: [
+          {
+            model: OrdersModel,
+            where: {
+              storeID,
+              OrderDate: {
+                [Op.between]: [dateFrom, dateTo],
+              },
+            },
+          },
+          {
+            model: PaymentsModel,
+          },
+        ],
+      })
 
-    // check if dateFrom is not greater than dateTo
+      let soldProductsCount = 0
+      let totalSoldProductsPrice = 0
+
+      for (const orderItem of soldProducts) {
+        const { Quantity, Subtotal } = orderItem
+        const storeProduct = await StoreProductModel.findByPk(
+          orderItem.ProductID
+        )
+
+        if (storeProduct) {
+          soldProductsCount += Quantity
+          totalSoldProductsPrice += Quantity * Subtotal
+        }
+      }
+
+      return res.status(200).json({
+        code: 200,
+        message: 'Successfully retrieved sold products count and total price',
+        data: {
+          soldProductsCount,
+          totalSoldProductsPrice,
+        },
+      })
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json({
+        code: 500,
+        message: 'Internal server error',
+      })
+    }
   }
 }
 
