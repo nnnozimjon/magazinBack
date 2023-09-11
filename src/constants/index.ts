@@ -9,23 +9,24 @@ const Api = {
     registerAffiliate: '/api/v1/affiliates/register',
 
     // Store
-    loginPartnerStore: '/api/v1/partnerStores/login',
-    registerPartnerStore: '/api/v1/partnerStores/register',
+    loginPartnerStore: '/api/v1/partner-stores/login',
+    registerPartnerStore: '/api/v1/partner-stores/register',
   },
 
   dashboard: {
     partnerStores: {
-      soldProductsCount: '/api/v1/dashboard/partnerStores/sold-products-count',
-      soldProductsPrice: '/api/v1/dashboard/partnerStores/sold-products-price',
+      soldProductsCount: '/api/v1/dashboard/partner-stores/sold-products-count',
+      soldProductsPrice: '/api/v1/dashboard/partner-stores/sold-products-price',
     },
   },
 
-  product: {
-    partnerStore: {
-      createProduct: '/api/v1/product/partnerStore/create-product',
-      editProduct: '/api/v1/product/partnerStore/edit-product',
-      deleteProduct: '/api/v1/product/partnerStore/delete-product',
-      getProducts: '/api/v1/product/partnerStore/get-products',
+  partnerStore: {
+    product: {
+      createProduct: '/api/v1/partner-store/product/create-product',
+      editProduct: '/api/v1/partner-store/product/edit-product',
+      deleteProduct: '/api/v1/partner-store/product/delete-product',
+      getProducts: '/api/v1/partner-store/product/get-products',
+      images: '/api/v1/partner-store/product/images',
     },
   },
 }

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express'
 import ValidatorController from '../validators'
 import { StoreProductModel } from '../../models/index'
+import Api from '../../constants'
+import baseURL from '../../utils'
 
 class StoreProduct {
   static async createProduct(req: Request, res: Response) {
@@ -208,7 +210,29 @@ class StoreProduct {
         },
       })
 
-      res.json(products)
+      const productsPayload = products.map(product => {
+        const prductImages = product.Images?.map(name => {
+          return baseURL + Api.partnerStore.product.images + `/${name}`
+        })
+
+        return {
+          productId: product.ProductID,
+          productName: product.ProductName,
+          description: product.Description,
+          price: product.Price,
+          stockQuantity: product.StockQuantity,
+          images: prductImages,
+          size: product.Size,
+          color: product.Color,
+          discount: product.Discount,
+        }
+      })
+
+      res.status(200).json({
+        code: 200,
+        message: 'Успешно',
+        payload: productsPayload,
+      })
     } catch (error) {
       console.error('Error:', error)
       res.status(500).json({

@@ -42,7 +42,7 @@ Router.post(
 
 // Partner Store Products API
 Router.post(
-  Api.product.partnerStore.createProduct,
+  Api.partnerStore.product.createProduct,
   [
     verifyToken,
     Service.FileDownload.ProductPhoto().fields([{ name: 'file', maxCount: 3 }]),
@@ -51,19 +51,19 @@ Router.post(
 )
 
 Router.put(
-  Api.product.partnerStore.editProduct,
+  Api.partnerStore.product.editProduct,
   [verifyToken],
   System.StoreProduct.editProduct
 )
 
 Router.delete(
-  Api.product.partnerStore.deleteProduct,
+  Api.partnerStore.product.deleteProduct,
   [verifyToken],
   System.StoreProduct.deleteProduct
 )
 
 Router.get(
-  Api.product.partnerStore.getProducts,
+  Api.partnerStore.product.getProducts,
   [verifyToken],
   System.StoreProduct.getProducts
 )

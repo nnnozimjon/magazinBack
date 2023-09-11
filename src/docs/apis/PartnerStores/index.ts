@@ -1,5 +1,5 @@
 const register = {
-  '/partnerStores/register': {
+  '/api/v1/partner-stores/register': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Partner stores registration!',
@@ -62,7 +62,7 @@ const register = {
 }
 
 const login = {
-  '/partnerStores/login': {
+  '/api/v1/partner-stores/login': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Partner Stores login form',
@@ -84,7 +84,7 @@ const login = {
 }
 
 const createProduct = {
-  '/partnerStore/createProduct': {
+  '/api/v1/partner-store/product/create-product': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Create product',
@@ -149,7 +149,7 @@ const createProduct = {
 }
 
 const editProduct = {
-  '/partnerStore/editProduct': {
+  '/api/v1/partner-store/product/edit-product': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Edit product!',
@@ -213,7 +213,7 @@ const editProduct = {
 }
 
 const deleteProduct = {
-  '/partnerStore/deleteProduct': {
+  '/api/v1/partner-store/product/delete-product': {
     post: {
       tags: ['PartnerStores'],
       summary: 'Delete Product!',
@@ -231,11 +231,51 @@ const deleteProduct = {
   },
 }
 
+const getProducts = {
+  '/api/v1/partner-store/product/get-products': {
+    get: {
+      tags: ['PartnerStores'],
+      summary: 'Get products!',
+      parameters: {},
+      responses: {
+        '200': {
+          description: 'Success',
+          content: {
+            'application/json': {
+              example: {
+                code: 200,
+                message: 'Успешно',
+                payload: [
+                  {
+                    productId: 'number',
+                    productName: 'string',
+                    description: 'string',
+                    price: 'number',
+                    stockQuantity: 'number',
+                    images: [
+                      'https://dev-dushanbemarket.com/api/v1/partner-store/product/images/example.png',
+                      'https://dev-dushanbemarket.com/api/v1/partner-store/product/images/example.jpg',
+                    ],
+                    size: 'string',
+                    color: 'string',
+                    discount: 'number',
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
 const PartnerStores = {
   ...register,
   ...login,
   ...createProduct,
   ...editProduct,
   ...deleteProduct,
+  ...getProducts,
 }
 export default PartnerStores
