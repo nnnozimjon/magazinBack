@@ -170,32 +170,31 @@ class StoreProduct {
     try {
       const token = req.headers.authorization || ''
       const { storeID } = ValidatorController.getTokenData(token, res)
-      const { id: productID } = req.params
+      const { id: productID } = req.query
 
-      // Use StoreProductModel to retrieve the product
-      const product = await StoreProductModel.findByPk(productID)
+      const product = await StoreProductModel.findByPk(Number(productID))
 
-      // Check if the product exists
       if (!product) {
-        return res.status(404).json({ error: 'Product not found' })
+        return res.status(400).json({
+          code: 400,
+          message: 'Продукт не найден!',
+        })
       }
 
-      // Check if the product belongs to the store
       if (product.storeID !== storeID) {
-        return res
-          .status(403)
-          .json({ error: 'Unauthorized to delete this product' })
+        return res.status(403).json({ code: 403, message: 'Неавторизованный!' })
       }
 
-      // Delete the product
       await product.destroy()
 
-      // Respond with a success status
-      return res.status(204).send()
+      return res.status(200).json({
+        code: 200,
+        message: 'Продукт удален успешно!',
+      })
     } catch (error) {
-      // Handle any errors (e.g., database errors, validation errors)
-      console.error(error)
-      return res.status(500).json({ error: 'Internal Server Error' })
+      return res
+        .status(500)
+        .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
     }
   }
 

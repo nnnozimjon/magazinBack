@@ -63,21 +63,19 @@ Router.delete(
 )
 
 Router.get(
-  Api.partnerStore.product.getProducts,
+  Api.partnerStore.product.getAllProducts,
   [verifyToken],
   System.StoreProduct.getProducts
 )
 
 Router.get(
   Api.partnerStore.product.storeProductImage,
-  // [verifyToken],
   System.ImageController.storeProductImage
 )
 
 // Partner Store Profile API
 Router.get(
   Api.partnerStore.profile.storeImage,
-  // [verifyToken],
   System.ImageController.partnerStoreImage
 )
 

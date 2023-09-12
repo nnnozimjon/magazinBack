@@ -150,7 +150,7 @@ const createProduct = {
 
 const editProduct = {
   '/api/v1/partner-store/product/edit-product': {
-    post: {
+    put: {
       tags: ['PartnerStores'],
       summary: 'Edit product!',
       consumes: 'multipart/form-data',
@@ -213,8 +213,8 @@ const editProduct = {
 }
 
 const deleteProduct = {
-  '/api/v1/partner-store/product/delete-product': {
-    post: {
+  '/api/v1/partner-store/product/delete-product/?id=': {
+    delete: {
       tags: ['PartnerStores'],
       summary: 'Delete Product!',
       consumes: 'multipart/form-data',
@@ -232,7 +232,7 @@ const deleteProduct = {
 }
 
 const getProducts = {
-  '/api/v1/partner-store/product/get-products': {
+  '/api/v1/partner-store/product/get-all-products': {
     get: {
       tags: ['PartnerStores'],
       summary: 'Get products!',
