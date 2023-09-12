@@ -68,6 +68,19 @@ Router.get(
   System.StoreProduct.getProducts
 )
 
+Router.get(
+  Api.partnerStore.product.storeProductImage,
+  // [verifyToken],
+  System.ImageController.storeProductImage
+)
+
+// Partner Store Profile API
+Router.get(
+  Api.partnerStore.profile.storeImage,
+  // [verifyToken],
+  System.ImageController.partnerStoreImage
+)
+
 // Partner Store Dashboard API
 Router.post(
   Api.dashboard.partnerStores.soldProductsCount,

@@ -212,7 +212,9 @@ class StoreProduct {
 
       const productsPayload = products.map(product => {
         const prductImages = product.Images?.map(name => {
-          return baseURL + Api.partnerStore.product.images + `/${name}`
+          return (
+            baseURL + Api.partnerStore.product.storeProductImage + `/${name}`
+          )
         })
 
         return {

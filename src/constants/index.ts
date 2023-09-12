@@ -21,12 +21,17 @@ const Api = {
   },
 
   partnerStore: {
+    profile: {
+      storeImage: '/api/v1/partner-store/profile/store-image/:image',
+    },
+
     product: {
       createProduct: '/api/v1/partner-store/product/create-product',
       editProduct: '/api/v1/partner-store/product/edit-product',
       deleteProduct: '/api/v1/partner-store/product/delete-product',
       getProducts: '/api/v1/partner-store/product/get-products',
-      images: '/api/v1/partner-store/product/images',
+      storeProductImage:
+        '/api/v1/partner-store/product/store-product-image/:image',
     },
   },
 }
