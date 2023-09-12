@@ -22,7 +22,7 @@ const Api = {
 
   partnerStore: {
     profile: {
-      storeImage: '/api/v1/partner-store/profile/store-image/:image',
+      storeImage: '/api/v1/partner-store/profile/store-image',
     },
 
     product: {
@@ -30,8 +30,7 @@ const Api = {
       editProduct: '/api/v1/partner-store/product/edit-product',
       deleteProduct: '/api/v1/partner-store/product/delete-product', // DONE
       getAllProducts: '/api/v1/partner-store/product/get-all-products', // DONE
-      storeProductImage:
-        '/api/v1/partner-store/product/store-product-image/:image', // DONE
+      storeProductImage: '/api/v1/partner-store/product/store-product-image', // DONE
     },
   },
 }
