@@ -1,12 +1,11 @@
 import { Model, DataTypes } from 'sequelize'
 import sequelize from '../../config/db/index'
 import OrdersModel from '../Orders' // Import the OrdersModel for the foreign key reference
-import ProductsModel from '../storeProduct' // Import the ProductsModel for the foreign key reference
+import StoreProductModel from '../storeProduct' // Import the ProductsModel for the foreign key reference
 
 class OrderItemsModel extends Model {
   public OrderItemID!: number
   public OrderID!: number
-  public storeID!: number
   public ProductID!: number
   public Quantity!: number
   public Subtotal!: number
@@ -33,7 +32,7 @@ OrderItemsModel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: ProductsModel, // Reference the ProductsModel for the foreign key
+        model: StoreProductModel, // Reference the ProductsModel for the foreign key
         key: 'ProductID',
       },
     },

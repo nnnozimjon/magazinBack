@@ -78,9 +78,14 @@ Router.get(
   Api.partnerStore.profile.storeImage,
   System.ImageController.partnerStoreImage
 )
+Router.get(
+  Api.partnerStore.profile.getStoreData,
+  [verifyToken],
+  System.StoreController.getUserData
+)
 
 // Partner Store Dashboard API
-Router.post(
+Router.get(
   Api.dashboard.partnerStores.soldProductsCount,
   [verifyToken],
   System.Dashboard.getSoldProductQuantity

@@ -239,7 +239,7 @@ const getProducts = {
       parameters: {},
       responses: {
         '200': {
-          description: 'Success',
+          description: 'success',
           content: {
             'application/json': {
               example: {
@@ -270,9 +270,47 @@ const getProducts = {
   },
 }
 
+const getStoreData = {
+  '/api/v1/partner-store/profile/user-data': {
+    get: {
+      tags: ['PartnerStores'],
+      summary: 'Get user Product!',
+      consumes: 'multipart/form-data',
+      parameters: {},
+      responses: {
+        '200': {
+          description: 'success',
+          content: {
+            'application/json': {
+              example: {
+                code: 200,
+                message: 'Успешно',
+                payload: {
+                  storeId: 'number',
+                  storeName: 'string',
+                  userName: 'string',
+                  email: 'string',
+                  phoneNumber: 'string',
+                  brandIconUrl:
+                    'https://dev-dushanbemarket.com/api/v1/partner-store/product/images/example.png',
+                  headerPhotoUrl:
+                    'https://dev-dushanbemarket.com/api/v1/partner-store/product/images/example.png',
+                  cityAddress: 'string',
+                  storeAddress: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
 const PartnerStores = {
   ...register,
   ...login,
+  ...getStoreData,
   ...createProduct,
   ...editProduct,
   ...deleteProduct,

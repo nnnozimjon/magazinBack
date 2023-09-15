@@ -189,7 +189,7 @@ class StoreProduct {
 
       return res.status(200).json({
         code: 200,
-        message: 'Продукт удален успешно!',
+        message: 'Продукт успешно удален!',
       })
     } catch (error) {
       return res

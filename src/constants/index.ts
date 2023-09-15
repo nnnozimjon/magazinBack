@@ -9,20 +9,20 @@ const Api = {
     registerAffiliate: '/api/v1/affiliates/register',
 
     // Store
-    loginPartnerStore: '/api/v1/partner-stores/login',
-    registerPartnerStore: '/api/v1/partner-stores/register',
+    loginPartnerStore: '/api/v1/partner-stores/login', // DONE
+    registerPartnerStore: '/api/v1/partner-stores/register', // DONE
   },
 
   dashboard: {
     partnerStores: {
       soldProductsCount: '/api/v1/dashboard/partner-stores/sold-products-count',
-      soldProductsPrice: '/api/v1/dashboard/partner-stores/sold-products-price',
     },
   },
 
   partnerStore: {
     profile: {
-      storeImage: '/api/v1/partner-store/profile/store-image',
+      getStoreData: '/api/v1/partner-store/profile/user-data',
+      storeImage: '/api/v1/partner-store/profile/store-image', // DONE
     },
 
     product: {
