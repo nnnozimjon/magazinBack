@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import ValidatorController from '../validators'
 import { PartnerStore } from '../../models'
+import baseURL from '../../utils'
 
 class StoreController {
   static async getUserData(req: Request, res: Response) {
@@ -17,12 +18,18 @@ class StoreController {
       if (storeData) {
         res.status(200).json({
           storeId: storeData.StoreID,
-          storeName: storeData.StoreName,
           userName: storeData.Username,
+          storeName: storeData.StoreName,
           email: storeData.Email,
           phoneNumber: storeData.PhoneNumber,
-          brandIconUrl: storeData.BrandIconURL,
-          headerPhotoUrl: storeData.HeaderPhotoURL,
+          brandIconUrl:
+            baseURL +
+            '/api/v1/partner-store/profile/store-image/' +
+            storeData.BrandIconURL,
+          headerPhotoUrl:
+            baseURL +
+            '/api/v1/partner-store/profile/store-image/' +
+            storeData.HeaderPhotoURL,
           cityAddress: storeData.CityAddress,
           storeAddress: storeData.StoreAddress,
         })
