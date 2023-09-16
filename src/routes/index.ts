@@ -84,6 +84,18 @@ Router.get(
   System.StoreController.getUserData
 )
 
+Router.put(
+  Api.partnerStore.profile.editStore,
+  [verifyToken],
+  System.StoreController.editStore
+)
+
+Router.delete(
+  Api.partnerStore.profile.deleteStore,
+  [verifyToken],
+  System.StoreController.deleteStore
+)
+
 // Partner Store Dashboard API
 Router.get(
   Api.dashboard.partnerStores.soldProductsCount,

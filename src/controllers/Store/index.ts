@@ -37,41 +37,68 @@ class StoreController {
         res.status(400).json({
           code: 400,
           message: 'Магазин не найден',
-        }) // Handle case when storeData is not found
+        })
       }
     } catch (error) {
-      console.error(error)
       res.status(500).json({
         code: 500,
         message: 'Внутренняя ошибка сервера!',
-      }) // Handle other errors
+      })
     }
   }
 
   static async editStore(req: Request, res: Response) {
+    const token = req.headers.authorization || ''
+    const { storeID } = ValidatorController.getTokenData(token, res)
+
     try {
-      const { StoreID, ...updatedData } = req.body
+      const {
+        userName,
+        storeName,
+        email,
+        phoneNumber,
+        cityAddress,
+        storeAddress,
+      } = req.body
+
+      const requiredFields = {
+        userName,
+        storeName,
+        email,
+        phoneNumber,
+        cityAddress,
+        storeAddress,
+      }
+
+      const validation =
+        ValidatorController.validateRequiredFields(requiredFields)
+
+      if (!validation.valid) {
+        return res.status(400).json({
+          code: 400,
+          message: validation.error + ' требуется!',
+        })
+      }
+
+      const updatedData = {}
 
       // Check if StoreID is provided in the request
-      if (!StoreID) {
-        return res.status(400).json({ message: 'StoreID is required' })
+      if (!storeID) {
+        return res
+          .status(400)
+          .json({ code: '', message: 'Необходимо указать StoreID.' })
       }
 
-      // Replace the following lines with your actual logic to update the store data
-      // Example: const updatedStoreData = await StoreModel.update(updatedData, { where: { StoreID } });
-
-      // Simulating a successful update
-      const updatedStoreData = {
-        StoreID,
-        ...updatedData,
-      }
-
-      res.json(updatedStoreData)
+      const updatedStoreData = await PartnerStore.update(updatedData, {
+        where: { storeID },
+      })
     } catch (error) {
       console.error(error)
-      res.status(500).json({ message: 'Internal server error' })
+      res.status(500).json({ code: 500, message: 'Внутренняя ошибка сервера!' })
     }
   }
+
+  static async deleteStore(req: Request, res: Response) {}
 }
 
 export default StoreController

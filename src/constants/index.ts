@@ -21,8 +21,11 @@ const Api = {
 
   partnerStore: {
     profile: {
-      getStoreData: '/api/v1/partner-store/profile/user-data',
+      getStoreData: '/api/v1/partner-store/profile/user-data', // DONE
       storeImage: '/api/v1/partner-store/profile/store-image', // DONE
+
+      editStore: '/api/v1/partner-store/profile/edit-store',
+      deleteStore: '/api/v1/partner-store/profile/delete-store',
     },
 
     product: {
