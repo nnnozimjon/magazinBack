@@ -1,4 +1,4 @@
-import { PartnerStore } from '../../models/index'
+import { CustomersModel, PartnerStore } from '../../models/index'
 import { Response } from 'express'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
@@ -156,6 +156,38 @@ class ValidatorController {
     }
   }
 
+  static async isCustomerCredentialValid(
+    res: Response,
+    email: string,
+    password: string
+  ) {
+    try {
+      const customer = await CustomersModel.findOne({
+        where: {
+          Email: email,
+        },
+      })
+
+      if (customer) {
+        // Compare the provided password with the hashed password in the database
+        const passwordMatch = await bcrypt.compare(password, customer.Password)
+
+        if (passwordMatch) {
+          return customer
+        } else {
+          return null // Passwords do not match
+        }
+      } else {
+        return null // Store not found
+      }
+    } catch (err: any) {
+      return res.status(500).json({
+        code: 500,
+        message: err.message,
+      })
+    }
+  }
+
   static getTokenData(
     token: string,
     res: Response
@@ -185,6 +217,49 @@ class ValidatorController {
       storeID: decodedToken.StoreID,
       storeName: decodedToken.StoreName,
       username: decodedToken.Username,
+    }
+  }
+
+  static async isCustomerByEmailExists(Email: string, customerID?: number) {
+    try {
+      const existingStoreName = await CustomersModel.findOne({
+        where: {
+          Email,
+          ...(customerID && {
+            CustomerID: {
+              [Op.not]: customerID,
+            },
+          }),
+        },
+      })
+
+      return !!existingStoreName
+    } catch (error) {
+      console.log('Error checking store existence: ' + error)
+      return true
+    }
+  }
+
+  static async isCustomerByPhoneNumberExists(
+    PhoneNumber: string,
+    customerID?: number
+  ) {
+    try {
+      const existingStoreName = await CustomersModel.findOne({
+        where: {
+          PhoneNumber,
+          ...(customerID && {
+            CustomerID: {
+              [Op.not]: customerID,
+            },
+          }),
+        },
+      })
+
+      return !!existingStoreName
+    } catch (error) {
+      console.log('Error checking store existence: ' + error)
+      return true
     }
   }
 }

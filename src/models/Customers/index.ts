@@ -3,12 +3,9 @@ import sequelize from '../../config/db/index'
 
 class CustomersModel extends Model {
   public CustomerId!: number
-  public FirstName!: string
-  public LastName!: string
   public Email!: string
   public PhoneNumber!: string
-  public ShippingAddress!: string | null
-  public BillingAddress!: string | null
+  public Username!: string
   public Password!: string
   public createdAt!: Date
 
@@ -22,14 +19,11 @@ CustomersModel.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    FirstName: {
+    Username: {
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    LastName: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
+
     Email: {
       type: DataTypes.STRING(255),
       allowNull: false,
@@ -37,14 +31,7 @@ CustomersModel.init(
     PhoneNumber: {
       type: DataTypes.STRING(20),
     },
-    ShippingAddress: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    BillingAddress: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
+
     Password: {
       type: DataTypes.STRING(255),
     },

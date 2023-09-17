@@ -58,7 +58,7 @@ class UserAuth {
       const token = await jwt.sign(
         {
           customerID: customer.CustomerID,
-          userName: customer.Username,
+          Username: customer.Username,
           email: customer.Email,
         },
         partnerStoreSecretKey,
@@ -80,12 +80,6 @@ class UserAuth {
 
   static async registerCustomer(req: Request, res: Response) {
     const { email, phoneNumber, username, password } = req.body
-
-    const files: any = req.files
-
-    const storeBrandLogoFile =
-      files && files['profileImage'] ? files['profileImage'][0] : null
-
     const requiredFields = {
       email,
       phoneNumber,
@@ -93,50 +87,23 @@ class UserAuth {
       password,
     }
 
+    // DO THE BODY FIELD PROVIDED
     const validation =
       ValidatorController.validateRequiredFields(requiredFields)
 
-    const isPhoneNumberCorrect =
-      ValidatorController.validatePhoneNumber(phoneNumber)
-
-    const isCustomerByPhoneNumberExists =
-      await ValidatorController.isCustomerByPhoneNumberExists(
-        ValidatorController.cleanPhoneNumber(phoneNumber)
-      )
-
-    if (!ValidatorController.isValidEmail(email)) {
-      files['profileImage'] &&
-        (await ValidatorController.deleteFile(
-          storeBrandLogoFile,
-          'profileImage'
-        ))
-      return res.status(400).json({
-        code: 400,
-        message: 'Неверный адрес электронной почты!',
-      })
-    }
-
-    const isCustomerByEmailExits =
-      await ValidatorController.isCustomerByEmailExists(email)
-
     if (!validation.valid) {
-      files['profileImage'] &&
-        (await ValidatorController.deleteFile(
-          storeBrandLogoFile,
-          'profileImage'
-        ))
       return res.status(400).json({
         code: 400,
         message: validation.error,
       })
     }
 
+    // CHECK THE BODY FIELD VALIDITY
+    const isPhoneNumberCorrect =
+      ValidatorController.validatePhoneNumber(phoneNumber)
+    const isEmailCorrect = ValidatorController.isValidEmail(email)
+
     if (!isPhoneNumberCorrect) {
-      files['profileImage'] &&
-        (await ValidatorController.deleteFile(
-          storeBrandLogoFile,
-          'profileImage'
-        ))
       return res.status(400).json({
         code: 400,
         message:
@@ -144,24 +111,30 @@ class UserAuth {
       })
     }
 
-    if (isCustomerByPhoneNumberExists) {
-      files['profileImage'] &&
-        (await ValidatorController.deleteFile(
-          storeBrandLogoFile,
-          'profileImage'
-        ))
+    if (!isEmailCorrect) {
       return res.status(400).json({
         code: 400,
-        message: 'Магазин по указанному номеру телефона уже существует!',
+        message: 'Неверный адрес электронной почты!',
+      })
+    }
+
+    // CHECK IF THE FIELDS ARE NOT IN DATABASE
+    const isCustomerByPhoneNumberExists =
+      await ValidatorController.isCustomerByPhoneNumberExists(
+        ValidatorController.cleanPhoneNumber(phoneNumber)
+      )
+
+    const isCustomerByEmailExits =
+      await ValidatorController.isCustomerByEmailExists(email)
+
+    if (isCustomerByPhoneNumberExists) {
+      return res.status(400).json({
+        code: 400,
+        message: 'Клиент по указанному номеру телефона уже существует!',
       })
     }
 
     if (isCustomerByEmailExits) {
-      files['profileImage'] &&
-        (await ValidatorController.deleteFile(
-          storeBrandLogoFile,
-          'profileImage'
-        ))
       return res.status(400).json({
         code: 400,
         message: 'Клиент по электронной почте уже существует!',
@@ -173,36 +146,25 @@ class UserAuth {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     try {
-      const newAccount: CustomersModel = await CustomersModel.create({
+      const customer: CustomersModel = await CustomersModel.create({
         Username: username,
         Email: email,
         Password: hashedPassword,
         PhoneNumber: cleanedPhoneNumber,
-        BrandIconURL: storeBrandLogoFile?.filename,
       })
 
-      if (newAccount) {
+      if (customer) {
         res.status(200).json({
           code: 200,
           message: 'Аккаунт успешно создан!',
         })
       } else {
-        files['profileImage'] &&
-          (await ValidatorController.deleteFile(
-            storeBrandLogoFile,
-            'profileImage'
-          ))
         return res.status(500).json({
           code: 500,
           message: 'Не удалось создать аккаунт! Попробуйте еще раз!',
         })
       }
     } catch (error: any) {
-      files['profileImage'] &&
-        (await ValidatorController.deleteFile(
-          storeBrandLogoFile,
-          'profileImage'
-        ))
       return res.status(500).json({
         code: 500,
         message: 'Не удалось создать аккаунт! Попробуйте еще раз!',
@@ -214,7 +176,6 @@ class UserAuth {
   static loginAffiliate() {}
 
   // PARTNER AUTH CONTROLLER
-
   static async loginPartnerStore(req: Request, res: Response) {
     try {
       const { email, password } = req.body

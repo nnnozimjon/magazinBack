@@ -68,7 +68,7 @@ const login = {
       summary: 'Partner Stores login form',
       parameters: [
         {
-          name: 'storeName',
+          name: 'email',
           in: 'body',
           type: 'string',
         },

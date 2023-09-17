@@ -1,4 +1,4 @@
-import UserAuth from './Auth'
+import UserAuth from './Auth/UserAuth'
 import StoreProduct from './StoreProduct'
 import Dashboard from './Dashboard'
 import ImageController from './Image'
