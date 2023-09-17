@@ -22,7 +22,7 @@ const Api = {
   partnerStore: {
     profile: {
       getStoreData: '/api/v1/partner-store/profile/user-data', // DONE
-      storeImage: '/api/v1/partner-store/profile/store-image', // DONE
+      storeImage: '/api/v1/partner-store/profile/store-image/:image', // DONE
       editStore: '/api/v1/partner-store/profile/edit-store',
       deleteStore: '/api/v1/partner-store/profile/delete-store',
     },
@@ -32,7 +32,8 @@ const Api = {
       editProduct: '/api/v1/partner-store/product/edit-product',
       deleteProduct: '/api/v1/partner-store/product/delete-product', // DONE
       getAllProducts: '/api/v1/partner-store/product/get-all-products', // DONE
-      storeProductImage: '/api/v1/partner-store/product/store-product-image', // DONE
+      storeProductImage:
+        '/api/v1/partner-store/product/store-product-image/:image', // DONE
     },
   },
 }
