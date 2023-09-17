@@ -115,6 +115,21 @@ class UserAuth {
     const validation =
       ValidatorController.validateRequiredFields(requiredFields)
 
+    const isPhoneNumberCorrect =
+      ValidatorController.validatePhoneNumber(phoneNumber)
+
+    const isStoreByEmailExists = await ValidatorController.isStoreByEmailExists(
+      email
+    )
+    const isStoreByPhoneNumberExists =
+      await ValidatorController.isStoreByPhoneNumberExists(
+        ValidatorController.cleanPhoneNumber(phoneNumber)
+      )
+
+    const isStoreNameExists = await ValidatorController.isStoreNameExists(
+      storeName
+    )
+
     if (!storeBrandLogoFile || !storeHeaderPhotoFile) {
       return UserAuth.handleRegistrationError(
         res,
@@ -142,6 +157,69 @@ class UserAuth {
       )
     }
 
+    if (!isPhoneNumberCorrect) {
+      await ValidatorController.deleteFile(
+        storeBrandLogoFile,
+        'partnerStoresImages'
+      )
+      await ValidatorController.deleteFile(
+        storeHeaderPhotoFile,
+        'partnerStoresImages'
+      )
+      return res.status(400).json({
+        code: 400,
+        message:
+          'Неверный номер телефона! Принимается только номеров телефонов Таджикистана!',
+      })
+    }
+
+    if (isStoreByPhoneNumberExists) {
+      await ValidatorController.deleteFile(
+        storeBrandLogoFile,
+        'partnerStoresImages'
+      )
+      await ValidatorController.deleteFile(
+        storeHeaderPhotoFile,
+        'partnerStoresImages'
+      )
+      return res.status(400).json({
+        code: 400,
+        message: 'Магазин по указанному номеру телефона уже существует!',
+      })
+    }
+
+    if (isStoreByEmailExists) {
+      await ValidatorController.deleteFile(
+        storeBrandLogoFile,
+        'partnerStoresImages'
+      )
+      await ValidatorController.deleteFile(
+        storeHeaderPhotoFile,
+        'partnerStoresImages'
+      )
+      return res.status(400).json({
+        code: 400,
+        message: 'Магазин по электронной почте уже существует!',
+      })
+    }
+
+    if (isStoreNameExists) {
+      await ValidatorController.deleteFile(
+        storeBrandLogoFile,
+        'partnerStoresImages'
+      )
+      await ValidatorController.deleteFile(
+        storeHeaderPhotoFile,
+        'partnerStoresImages'
+      )
+      return res.status(400).json({
+        code: 400,
+        message: 'Магазин с таким названием уже существует!',
+      })
+    }
+
+    const cleanedPhoneNumber = ValidatorController.cleanPhoneNumber(phoneNumber)
+
     const hashedPassword = await bcrypt.hash(password, 10)
 
     try {
@@ -151,7 +229,7 @@ class UserAuth {
         Email: email,
         Password: hashedPassword,
         StoreAddress: storeAddress,
-        PhoneNumber: phoneNumber,
+        PhoneNumber: cleanedPhoneNumber,
         CityAddress: city,
         Currency: currency,
         AcceptTerms: true,
@@ -169,27 +247,13 @@ class UserAuth {
           res,
           storeBrandLogoFile,
           storeHeaderPhotoFile,
-          'Не удалось создать магазин.'
+          'Не удалось создать магазин! Попробуйте еще раз!'
         )
       }
     } catch (error: any) {
-      let errorMessage = 'Не удалось создать магазин!'
+      let errorMessage = 'Не удалось создать магазин! Попробуйте еще раз!'
 
-      if (error.errors[0]?.type === 'unique violation') {
-        switch (error.errors[0]?.path) {
-          case 'StoreName':
-            errorMessage = 'Магазин с таким названием существует!'
-            break
-          case 'Email':
-            errorMessage = 'Магазин с таким электронным адресом существует!'
-            break
-          default:
-            errorMessage = 'Магазин с таким номер телефона существует!'
-            break
-        }
-      } else {
-        errorMessage = 'Ошибка при создании магазина: ' + error.message
-      }
+      console.log(error)
 
       return UserAuth.handleRegistrationError(
         res,
