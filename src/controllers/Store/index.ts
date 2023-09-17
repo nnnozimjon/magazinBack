@@ -32,6 +32,7 @@ class StoreController {
             storeData.HeaderPhotoURL,
           cityAddress: storeData.CityAddress,
           storeAddress: storeData.StoreAddress,
+          verified: storeData.verified,
         })
       } else {
         res.status(400).json({

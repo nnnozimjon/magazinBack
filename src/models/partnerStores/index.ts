@@ -14,6 +14,7 @@ class PartnerStore extends Model {
   public Password!: string
   public Currency!: 'TJS' | 'Somoni'
   public AcceptTerms!: boolean
+  public verified!: 'rejected' | 'pending' | 'verified'
   // Timestamps will be automatically added: createdAt, updatedAt
 }
 
@@ -67,6 +68,10 @@ PartnerStore.init(
     },
     AcceptTerms: {
       type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
+    verified: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
   },
