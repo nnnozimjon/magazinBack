@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt'
 import fs from 'fs/promises'
 import path from 'path'
 import { partnerStoreSecretKey } from '../../common/token'
+import { Op } from 'sequelize'
 
 class ValidatorController {
   static isValidEmail(email: any) {
@@ -13,6 +14,80 @@ class ValidatorController {
 
     // Test the email against the regular expression
     return emailRegex.test(email)
+  }
+
+  static async isStoreByEmailExists(email: string, storeID?: number) {
+    try {
+      const existingStoreByEmail = await PartnerStore.findOne({
+        where: {
+          email,
+          ...(storeID && {
+            StoreID: {
+              [Op.not]: storeID,
+            },
+          }),
+        },
+      })
+
+      return !!existingStoreByEmail
+    } catch (error) {
+      console.log('Error checking store existence: ' + error)
+      return true
+    }
+  }
+
+  static async isStoreNameExists(StoreName: string, storeID?: number) {
+    try {
+      const existingStoreName = await PartnerStore.findOne({
+        where: {
+          StoreName,
+          ...(storeID && {
+            StoreID: {
+              [Op.not]: storeID,
+            },
+          }),
+        },
+      })
+
+      return !!existingStoreName
+    } catch (error) {
+      console.log('Error checking store existence: ' + error)
+      return true
+    }
+  }
+
+  static async isStoreByPhoneNumberExists(
+    PhoneNumber: string,
+    storeID?: number
+  ) {
+    try {
+      const existingStoreName = await PartnerStore.findOne({
+        where: {
+          PhoneNumber,
+          ...(storeID && {
+            StoreID: {
+              [Op.not]: storeID,
+            },
+          }),
+        },
+      })
+
+      return !!existingStoreName
+    } catch (error) {
+      console.log('Error checking store existence: ' + error)
+      return true
+    }
+  }
+
+  static cleanPhoneNumber(phoneNumber: string) {
+    return phoneNumber.replace(/\D/g, '')
+  }
+
+  static validatePhoneNumber(phoneNumber: string) {
+    const cleanPhoneNumber = phoneNumber.replace(/\D/g, '')
+
+    // Check if the cleaned phone number starts with "992" and has a length of exactly 12
+    return cleanPhoneNumber.length === 12
   }
 
   static validateRequiredFields(fields: { [key: string]: any }): {

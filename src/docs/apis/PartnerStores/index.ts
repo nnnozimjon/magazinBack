@@ -307,10 +307,58 @@ const getStoreData = {
   },
 }
 
+const editStore = {
+  '/api/v1/partner-store/profile/edit-store': {
+    put: {
+      tags: ['PartnerStores'],
+      summary: 'Edit Store Data!',
+      parameters: [
+        {
+          name: 'userName',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'storeName',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'email',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'phoneNumber',
+          in: 'query',
+          type: 'number', // Assuming price is a number
+          required: true,
+        },
+        {
+          name: 'cityAddress',
+          in: 'query',
+          type: 'string',
+          required: true,
+        },
+        {
+          name: 'storeAddress',
+          in: 'query',
+          type: 'string',
+        },
+      ],
+      responses: {},
+    },
+  },
+}
+
 const PartnerStores = {
   ...register,
   ...login,
   ...getStoreData,
+  ...editStore,
   ...createProduct,
   ...editProduct,
   ...deleteProduct,

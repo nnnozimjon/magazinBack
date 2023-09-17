@@ -76,22 +76,92 @@ class StoreController {
       if (!validation.valid) {
         return res.status(400).json({
           code: 400,
-          message: validation.error + ' требуется!',
+          message: validation.error,
         })
       }
 
-      const updatedData = {}
-
-      // Check if StoreID is provided in the request
-      if (!storeID) {
-        return res
-          .status(400)
-          .json({ code: '', message: 'Необходимо указать StoreID.' })
+      // email validation
+      const isEmailCorrect = ValidatorController.isValidEmail(email)
+      if (!isEmailCorrect) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Указан неверный адрес электронной почты!',
+        })
       }
 
-      const updatedStoreData = await PartnerStore.update(updatedData, {
-        where: { storeID },
+      const isPhoneNumberCorrect =
+        ValidatorController.validatePhoneNumber(phoneNumber)
+      if (!isPhoneNumberCorrect) {
+        return res.status(400).json({
+          code: 400,
+          message:
+            'Неверный номер телефона! Принимается только номеров телефонов Таджикистана!',
+        })
+      }
+
+      const isStoreByEmailExists =
+        await ValidatorController.isStoreByEmailExists(email, storeID)
+
+      if (isStoreByEmailExists) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Магазин по электронной почте уже существует!',
+        })
+      }
+
+      const isStoreNameExists = await ValidatorController.isStoreNameExists(
+        storeName,
+        storeID
+      )
+
+      if (isStoreNameExists) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Магазин с таким названием уже существует!',
+        })
+      }
+
+      const isStoreByPhoneNumberExists =
+        await ValidatorController.isStoreByPhoneNumberExists(
+          phoneNumber,
+          storeID
+        )
+
+      if (isStoreByPhoneNumberExists) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Магазин по указанному номеру телефона уже существует!',
+        })
+      }
+
+      const cleanedPhoneNumber =
+        ValidatorController.cleanPhoneNumber(phoneNumber)
+
+      const updatedData = {
+        StoreName: storeName,
+        Username: userName,
+        Email: email,
+        PhoneNumber: cleanedPhoneNumber,
+        CityAddress: cityAddress,
+        StoreAddress: storeAddress,
+      }
+
+      const [rowsAffected] = await PartnerStore.update(updatedData, {
+        where: { StoreID: storeID },
       })
+      console.log(rowsAffected)
+
+      if (rowsAffected === 1) {
+        res.status(200).json({
+          code: 200,
+          message: 'Магазин успешно обновлен!',
+        })
+      } else {
+        res.status(500).json({
+          code: 500,
+          message: 'Внутренняя ошибка сервера!',
+        })
+      }
     } catch (error) {
       console.error(error)
       res.status(500).json({ code: 500, message: 'Внутренняя ошибка сервера!' })
