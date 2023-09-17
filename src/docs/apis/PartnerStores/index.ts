@@ -354,11 +354,58 @@ const editStore = {
   },
 }
 
+const deleteStore = {
+  '/api/v1/partner-store/profile/delete-store': {
+    delete: {
+      tags: ['PartnerStores'],
+      summary: 'Delete Store!',
+      consumes: 'multipart/form-data',
+      parameters: {},
+      responses: {
+        '200': {
+          description: 'success',
+          content: {
+            'application/json': {
+              example: {
+                code: 200,
+                message: 'Магазин успешно удален!',
+              },
+            },
+          },
+        },
+        '404': {
+          description: 'warning',
+          content: {
+            'application/json': {
+              example: {
+                code: 404,
+                message: 'Магазин не найден!',
+              },
+            },
+          },
+        },
+        '500': {
+          description: 'failed',
+          content: {
+            'application/json': {
+              example: {
+                code: 500,
+                message: 'Внутренняя ошибка сервера!',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
 const PartnerStores = {
   ...register,
   ...login,
   ...getStoreData,
   ...editStore,
+  ...deleteStore,
   ...createProduct,
   ...editProduct,
   ...deleteProduct,

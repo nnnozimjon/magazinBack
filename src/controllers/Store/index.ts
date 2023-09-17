@@ -168,7 +168,36 @@ class StoreController {
     }
   }
 
-  static async deleteStore(req: Request, res: Response) {}
+  static async deleteStore(req: Request, res: Response) {
+    const token = req.headers.authorization || ''
+    const { storeID } = ValidatorController.getTokenData(token, res)
+
+    try {
+      // Check if the store exists
+      const existingStore = await PartnerStore.findOne({ where: { storeID } })
+
+      if (!existingStore) {
+        return res.status(404).json({
+          code: 404,
+          message: 'Магазин не найден!',
+        })
+      }
+
+      // Delete the store
+      await PartnerStore.destroy({ where: { storeID } })
+
+      res.status(200).json({
+        code: 200,
+        message: 'Магазин успешно удален!',
+      })
+    } catch (error) {
+      console.error('Error deleting store:', error)
+      res.status(500).json({
+        code: 500,
+        message: 'Внутренняя ошибка сервера!',
+      })
+    }
+  }
 }
 
 export default StoreController
