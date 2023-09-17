@@ -6,6 +6,7 @@ import System from '../controllers'
 import Api from '../constants'
 import verifyToken from '../controllers/Token'
 
+// Router
 const Router = express.Router()
 
 // Swagger API configuration!
