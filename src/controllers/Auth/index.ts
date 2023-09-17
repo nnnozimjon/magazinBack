@@ -33,8 +33,8 @@ class UserAuth {
 
   static async loginPartnerStore(req: Request, res: Response) {
     try {
-      const { Email, password } = req.body
-      const requiredFields = { Email, password }
+      const { email, password } = req.body
+      const requiredFields = { email, password }
 
       const validation =
         ValidatorController.validateRequiredFields(requiredFields)
@@ -46,9 +46,14 @@ class UserAuth {
         })
       }
 
+      if (!ValidatorController.isValidEmail(email)) {
+        return res
+          .status(400)
+          .json({ code: 400, message: 'Неверный адрес электронной почты!' })
+      }
       const store: any = await ValidatorController.isStoreCredentialValid(
         res,
-        Email,
+        email,
         password
       )
 
