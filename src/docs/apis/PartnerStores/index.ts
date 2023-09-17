@@ -297,6 +297,7 @@ const getStoreData = {
                     'https://dev-dushanbemarket.com/api/v1/partner-store/product/images/example.png',
                   cityAddress: 'string',
                   storeAddress: 'string',
+                  verified: 'string',
                 },
               },
             },
