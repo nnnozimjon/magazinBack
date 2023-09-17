@@ -126,13 +126,13 @@ class ValidatorController {
 
   static async isStoreCredentialValid(
     res: Response,
-    storeName: string,
+    email: string,
     password: string
   ) {
     try {
       const store = await PartnerStore.findOne({
         where: {
-          StoreName: storeName,
+          Email: email,
         },
       })
 

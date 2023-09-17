@@ -33,8 +33,8 @@ class UserAuth {
 
   static async loginPartnerStore(req: Request, res: Response) {
     try {
-      const { storeName, password } = req.body
-      const requiredFields = { storeName, password }
+      const { Email, password } = req.body
+      const requiredFields = { Email, password }
 
       const validation =
         ValidatorController.validateRequiredFields(requiredFields)
@@ -48,7 +48,7 @@ class UserAuth {
 
       const store: any = await ValidatorController.isStoreCredentialValid(
         res,
-        storeName,
+        Email,
         password
       )
 
