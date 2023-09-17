@@ -6,7 +6,7 @@ class ImageController {
   static async storeProductImage(req: Request, res: Response) {
     const image = req.params.image
 
-    fs.readFile(`src/assets/storeProductsImages/${image}`, (err, data) => {
+    fs.readFile(`build/assets/storeProductsImages/${image}`, (err, data) => {
       if (err) {
         console.error(`Error reading file: ${err}`)
         return res.status(500).json({
@@ -23,7 +23,7 @@ class ImageController {
   static async partnerStoreImage(req: Request, res: Response) {
     const image = req.params.image
 
-    fs.readFile(`src/assets/partnerStoresImages/${image}`, (err, data) => {
+    fs.readFile(`build/assets/partnerStoresImages/${image}`, (err, data) => {
       if (err) {
         console.error(`Error reading file: ${err}`)
         return res.status(500).json({
