@@ -4,9 +4,9 @@ import baseURL from '../../utils'
 import { StoreProductModel } from '../../models'
 
 class ProductsController {
-  static async getProducts(req: Request, res: Response) {
+  static async getAllProducts(req: Request, res: Response) {
     try {
-      const { page = 1, pageSize = 10, category, premium } = req.query
+      const { page, pageSize, category, premium } = req.query
 
       // Define options for Sequelize query
       const options: any = {

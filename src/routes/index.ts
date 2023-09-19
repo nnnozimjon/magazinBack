@@ -107,7 +107,7 @@ Router.get(
 // Dushanbe Marketplace Product API
 Router.get(
   Api.market.products.getAllProducts,
-  System.ProductsController.getProducts
+  System.ProductsController.getAllProducts
 )
 
 export default Router
