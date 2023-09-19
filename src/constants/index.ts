@@ -36,6 +36,12 @@ const Api = {
         '/api/v1/partner-store/product/store-product-image/:image', // DONE
     },
   },
+
+  market: {
+    products: {
+      getAllProducts: '/api/v1/market/products/get-all-products',
+    },
+  },
 }
 
 export default Api

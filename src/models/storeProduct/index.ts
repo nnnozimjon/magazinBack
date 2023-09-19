@@ -74,7 +74,7 @@ StoreProductModel.init(
   },
   {
     sequelize,
-    modelName: 'createStoreProduct',
+    modelName: 'StoreProductModel',
     tableName: 'Products',
   }
 )
