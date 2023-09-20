@@ -1,5 +1,6 @@
 import FileDownload from './FileDownloader'
+import createObjectFromParams from './createObjectFromParams'
 
-const Service = { FileDownload }
+const Service = { FileDownload, createObjectFromParams }
 
 export default Service

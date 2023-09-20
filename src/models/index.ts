@@ -4,6 +4,7 @@ import CustomersModel from './Customers'
 import PaymentsModel from './Payments'
 import OrderItemsModel from './OrdersItems'
 import OrdersModel from './Orders'
+import WishlistModel from './Wishlists'
 
 export {
   PartnerStore,
@@ -12,4 +13,5 @@ export {
   PaymentsModel,
   OrderItemsModel,
   OrdersModel,
+  WishlistModel,
 }

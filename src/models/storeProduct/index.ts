@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize'
 import sequelize from '../../config/db/index'
+import WishlistModel from '../Wishlists'
 
 class StoreProductModel extends Model {
   public ProductID!: number
