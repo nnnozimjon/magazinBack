@@ -40,6 +40,10 @@ const Api = {
   market: {
     products: {
       getAllProducts: '/api/v1/market/products/get-all-products',
+      productAndWishlist: '/api/v1/market/products/product-and-wishlist',
+
+      getAllWishlistProducts:
+        '/api/v1/market/products/get-all-wishlist-products',
     },
   },
 }

@@ -1,2 +1,4 @@
 const partnerStoreSecretKey = '__partner__dushanbe-market'
-export { partnerStoreSecretKey }
+const CustomerSecretKey = '__customer2023__dushanbe-market'
+
+export { partnerStoreSecretKey, CustomerSecretKey }

@@ -1,7 +1,7 @@
 import { Response, Request } from 'express'
 import ValidatorController from '../validators'
 import { CustomersModel, PartnerStore } from '../../models/index'
-import { partnerStoreSecretKey } from '../../common/token'
+import { CustomerSecretKey, partnerStoreSecretKey } from '../../common/token'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
@@ -61,7 +61,7 @@ class UserAuth {
           Username: customer.Username,
           email: customer.Email,
         },
-        partnerStoreSecretKey,
+        CustomerSecretKey,
         {
           expiresIn: '3d',
         }

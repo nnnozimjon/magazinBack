@@ -2,7 +2,8 @@ import { Request, Response } from 'express'
 import baseURL from '../../utils'
 import { StoreProductModel } from '../../models'
 import { WishlistModel } from '../../models'
-import { Op } from 'sequelize'
+import { Op, or } from 'sequelize'
+import ValidatorController from '../validators'
 
 class ProductsController {
   static async getAllProducts(req: Request, res: Response) {
@@ -53,10 +54,12 @@ class ProductsController {
             Premium: premium,
           }),
         },
-        order: [
-          ['premium', 'DESC'],
-          ['category', 'ASC'],
-        ],
+        // order: premium
+        //   ? [
+        //       ['premium', 'DESC'],
+        //       ['category', 'ASC'],
+        //     ]
+        //   : [['category', 'ASC']],
       }
 
       // Query the database using Sequelize
@@ -110,6 +113,74 @@ class ProductsController {
     } catch (error) {
       console.error(error)
       res.status(500).json({ code: 500, error: 'Внутренняя ошибка сервера!' })
+    }
+  }
+
+  static getAllWishlistProducts() {}
+
+  static async productAndWishlist(req: Request, res: Response) {
+    try {
+      const { productId } = req.query
+      const token = req.headers.authorization || ''
+      const { customerId } = ValidatorController.getCustomerTokenData(
+        token,
+        res
+      )
+
+      const validation = ValidatorController.validateRequiredFields({
+        productId,
+      })
+
+      if (!validation.valid) {
+        return res.status(400).json({
+          code: 400,
+          message: validation.error,
+        })
+      }
+
+      // Find the product to add to the wishlist
+      const product = await StoreProductModel.findOne({
+        where: {
+          ProductID: productId,
+        },
+      })
+
+      if (!product) {
+        return res
+          .status(400)
+          .json({ code: 400, message: 'Продукт не найден!' })
+      }
+
+      // Find the customer's wishlist
+      const wishlist: any = await WishlistModel.findOne({
+        where: { CustomerID: customerId, ProductID: productId },
+      })
+
+      if (!wishlist) {
+        WishlistModel.create({
+          CustomerID: customerId,
+          ProductID: productId,
+        })
+        return res.status(400).json({
+          code: 400,
+          message: 'Продукт успешно добавлен в список желаний!',
+        })
+      } else {
+        WishlistModel.destroy({
+          where: {
+            CustomerID: customerId,
+            ProductID: productId,
+          },
+        })
+        return res.status(200).json({
+          code: 200,
+          message: 'Продукт успешно удален из списка желаний!',
+        })
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
     }
   }
 }

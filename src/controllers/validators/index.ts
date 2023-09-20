@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import fs from 'fs/promises'
 import path from 'path'
-import { partnerStoreSecretKey } from '../../common/token'
+import { CustomerSecretKey, partnerStoreSecretKey } from '../../common/token'
 import { Op } from 'sequelize'
 
 class ValidatorController {
@@ -216,6 +216,38 @@ class ValidatorController {
     return {
       storeID: decodedToken.StoreID,
       storeName: decodedToken.StoreName,
+      username: decodedToken.Username,
+    }
+  }
+
+  static getCustomerTokenData(
+    token: string,
+    res: Response
+  ): {
+    customerId: number
+    email: string
+    username: string
+  } {
+    const tokenValue = token.split(' ')[1]
+
+    const decodedToken: any = jwt.verify(
+      tokenValue,
+      CustomerSecretKey,
+      (err, decoded) => {
+        if (err) {
+          res.status(401).json({
+            code: 401,
+            message: 'Неавторизованный!',
+          })
+        }
+
+        return decoded
+      }
+    )
+
+    return {
+      customerId: decodedToken.CustomerID,
+      email: decodedToken.Email,
       username: decodedToken.Username,
     }
   }

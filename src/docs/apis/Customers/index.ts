@@ -54,6 +54,67 @@ const login = {
   },
 }
 
-const Customers = { ...register, ...login }
+const getProducts = {
+  '/api/v1/market/products/get-all-products': {
+    get: {
+      tags: ['Customers'],
+      summary: 'Customers login form',
+      parameters: [
+        {
+          name: 'page',
+          in: 'query',
+          type: 'number',
+        },
+        {
+          name: 'pageSize',
+          in: 'query',
+          type: 'number',
+        },
+        {
+          name: 'userId',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'productName',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'category',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'premium',
+          in: 'query',
+          type: 'boolean',
+        },
+        {
+          name: 'minPrice',
+          in: 'query',
+          type: 'number',
+        },
+        {
+          name: 'maxPrice',
+          in: 'query',
+          type: 'number',
+        },
+        {
+          name: 'color',
+          in: 'query',
+          type: 'string',
+        },
+        {
+          name: 'size',
+          in: 'query',
+          type: 'string',
+        },
+      ],
+      responses: {},
+    },
+  },
+}
+const Customers = { ...register, ...login, ...getProducts }
 
 export default Customers

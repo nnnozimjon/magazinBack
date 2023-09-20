@@ -109,5 +109,16 @@ Router.get(
   Api.market.products.getAllProducts,
   System.ProductsController.getAllProducts
 )
+// -- -- -- Product Wishlist API -- -- --
+Router.get(
+  Api.market.products.getAllWishlistProducts,
+  // [verifyToken], customerToken
+  System.ProductsController.getAllWishlistProducts
+)
+
+Router.post(
+  Api.market.products.productAndWishlist,
+  System.ProductsController.productAndWishlist
+)
 
 export default Router
