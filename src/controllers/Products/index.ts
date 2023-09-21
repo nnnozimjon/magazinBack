@@ -178,6 +178,7 @@ class ProductsController {
         })
       }
     } catch (error) {
+      console.log(error)
       return res
         .status(500)
         .json({ code: 500, message: 'Внутренняя ошибка сервера!' })

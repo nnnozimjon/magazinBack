@@ -3,7 +3,7 @@ import sequelize from '../../config/db/index'
 import WishlistModel from '../Wishlists'
 
 class CustomersModel extends Model {
-  public CustomerId!: number
+  public CustomerID!: number
   public Email!: string
   public PhoneNumber!: string
   public Username!: string
@@ -15,7 +15,7 @@ class CustomersModel extends Model {
 
 CustomersModel.init(
   {
-    CustomerId: {
+    CustomerID: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,

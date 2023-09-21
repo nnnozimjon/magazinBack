@@ -246,9 +246,9 @@ class ValidatorController {
     )
 
     return {
-      customerId: decodedToken.CustomerID,
-      email: decodedToken.Email,
-      username: decodedToken.Username,
+      customerId: decodedToken.customerID,
+      email: decodedToken.email,
+      username: decodedToken.userName,
     }
   }
 

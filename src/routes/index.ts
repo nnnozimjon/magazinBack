@@ -1,10 +1,11 @@
-import express, { Response, Request, NextFunction } from 'express'
+import express from 'express'
 import Service from '../services'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerJSON } from '../docs'
 import System from '../controllers'
 import Api from '../constants'
 import verifyToken from '../controllers/Token'
+import verifyCustomerToken from '../controllers/Token/customerToken'
 
 // Router
 const Router = express.Router()
@@ -118,6 +119,7 @@ Router.get(
 
 Router.post(
   Api.market.products.productAndWishlist,
+  [verifyCustomerToken],
   System.ProductsController.productAndWishlist
 )
 
