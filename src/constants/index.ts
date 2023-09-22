@@ -38,6 +38,9 @@ const Api = {
   },
 
   market: {
+    categories: {
+      getAll: '/api/v1/market/categories/get-all',
+    },
     products: {
       getAllProducts: '/api/v1/market/products/get-all-products',
       productAndWishlist: '/api/v1/market/products/product-and-wishlist',

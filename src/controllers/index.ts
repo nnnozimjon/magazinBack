@@ -4,6 +4,7 @@ import Dashboard from './Dashboard'
 import ImageController from './Image'
 import StoreController from './Store'
 import ProductsController from './Products'
+import CategoriesController from './Category'
 
 const System = {
   UserAuth,
@@ -12,6 +13,7 @@ const System = {
   Dashboard,
   StoreController,
   ImageController,
+  CategoriesController,
 }
 
 export default System

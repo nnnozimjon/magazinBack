@@ -110,6 +110,14 @@ Router.get(
   Api.market.products.getAllProducts,
   System.ProductsController.getAllProducts
 )
+
+// Categories API ------------------
+
+Router.get(
+  Api.market.categories.getAll,
+  System.CategoriesController.getCategoriesWithSubcategories
+)
+
 // -- -- -- Product Wishlist API -- -- --
 Router.get(
   Api.market.products.getAllWishlistProducts,
