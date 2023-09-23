@@ -6,6 +6,7 @@ import OrderItemsModel from './OrdersItems'
 import OrdersModel from './Orders'
 import WishlistModel from './Wishlists'
 import { CategoryModel, SubcategoryModel } from './Category'
+import CartItemsModel from './CartItems'
 
 export {
   PartnerStore,
@@ -17,4 +18,5 @@ export {
   WishlistModel,
   CategoryModel,
   SubcategoryModel,
+  CartItemsModel,
 }

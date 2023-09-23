@@ -47,6 +47,8 @@ const Api = {
 
       getAllWishlistProducts:
         '/api/v1/market/products/get-all-wishlist-products',
+
+      addProductToCart: '/api/v1/market/products/add-product-to-cart',
     },
   },
 }

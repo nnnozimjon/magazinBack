@@ -57,8 +57,8 @@ const login = {
 const getProducts = {
   '/api/v1/market/products/get-all-products': {
     get: {
-      tags: ['Customers'],
-      summary: 'Customers login form',
+      tags: ['Products'],
+      summary: 'Get all products!',
       parameters: [
         {
           name: 'page',
@@ -115,6 +115,28 @@ const getProducts = {
     },
   },
 }
-const Customers = { ...register, ...login, ...getProducts }
+
+const addProductToCart = {
+  '/api/v1/market/products/add-product-to-cart': {
+    post: {
+      tags: ['CartItems'],
+      summary: 'Add product to the cart!',
+      parameters: [
+        {
+          name: 'productId',
+          in: 'query',
+          type: 'number',
+        },
+        {
+          name: 'quantity',
+          in: 'query',
+          type: 'number',
+        },
+      ],
+      responses: {},
+    },
+  },
+}
+const Customers = { ...register, ...login, ...getProducts, ...addProductToCart }
 
 export default Customers

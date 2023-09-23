@@ -1,8 +1,7 @@
 import { Request, Response } from 'express'
 import baseURL from '../../utils'
-import { StoreProductModel } from '../../models'
-import { WishlistModel } from '../../models'
-import { Op, or } from 'sequelize'
+import { CartItemsModel, StoreProductModel, WishlistModel } from '../../models'
+import { Op } from 'sequelize'
 import ValidatorController from '../validators'
 
 class ProductsController {
@@ -185,18 +184,18 @@ class ProductsController {
     }
   }
 
-  static async productAndTrash(req: Request, res: Response) {
+  static async addProductToCart(req: Request, res: Response) {
     try {
-      const { productId } = req.query
+      const { productId, quantity } = req.query
       const token = req.headers.authorization || ''
       const { customerId } = ValidatorController.getCustomerTokenData(
         token,
         res
       )
 
-      const validation = ValidatorController.validateRequiredFields({
-        productId,
-      })
+      const requiredField = { productId, quantity }
+      const validation =
+        ValidatorController.validateRequiredFields(requiredField)
 
       if (!validation.valid) {
         return res.status(400).json({
@@ -205,43 +204,60 @@ class ProductsController {
         })
       }
 
-      // Find the product to add to the wishlist
-      const product = await StoreProductModel.findOne({
+      if (Number(quantity) <= 0) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Количество продукта должно быть больше нуля!',
+        })
+      }
+
+      const product: any = await StoreProductModel.findOne({
         where: {
           ProductID: productId,
         },
       })
 
       if (!product) {
-        return res
-          .status(400)
-          .json({ code: 400, message: 'Продукт не найден!' })
-      }
-
-      // Find the customer's wishlist
-      const wishlist: any = await WishlistModel.findOne({
-        where: { CustomerID: customerId, ProductID: productId },
-      })
-
-      if (!wishlist) {
-        WishlistModel.create({
-          CustomerID: customerId,
-          ProductID: productId,
-        })
         return res.status(400).json({
           code: 400,
-          message: 'Продукт успешно добавлен в список желаний!',
+          message: 'Продукт не найден!',
         })
-      } else {
-        WishlistModel.destroy({
-          where: {
-            CustomerID: customerId,
-            ProductID: productId,
-          },
+      }
+
+      const isActiveProductInCart = await CartItemsModel.findOne({
+        where: {
+          CustomerID: customerId,
+          ProductID: productId,
+        },
+      })
+
+      if (isActiveProductInCart) {
+        return res.status(400).json({
+          code: 400,
+          message: 'Продукт уже есть в корзине!',
         })
-        return res.status(200).json({
+      }
+
+      const { StockQuantity }: any = product
+      const isStockBiggerThanTheQuantity = quantity && StockQuantity >= quantity
+
+      if (!isStockBiggerThanTheQuantity) {
+        return res.status(400).json({
+          code: 400,
+          message: `Введено неверное количество. Максимальное количество товара – ${StockQuantity}!`,
+        })
+      }
+
+      const addToCart = await CartItemsModel.create({
+        ProductID: productId,
+        Quantity: quantity,
+        CustomerID: customerId,
+      })
+
+      if (addToCart) {
+        res.status(200).json({
           code: 200,
-          message: 'Продукт успешно удален из списка желаний!',
+          message: 'Продукт успешно добавлен в корзину!',
         })
       }
     } catch (error) {
@@ -251,6 +267,8 @@ class ProductsController {
         .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
     }
   }
+
+  static async removeProductFromCart() {}
 }
 
 export default ProductsController

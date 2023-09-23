@@ -118,10 +118,18 @@ Router.get(
   System.CategoriesController.getCategoriesWithSubcategories
 )
 
+// Add Product to Cart API ----------------
+
+Router.post(
+  Api.market.products.addProductToCart,
+  [verifyCustomerToken],
+  System.ProductsController.addProductToCart
+)
+
 // -- -- -- Product Wishlist API -- -- --
 Router.get(
   Api.market.products.getAllWishlistProducts,
-  // [verifyToken], customerToken
+  [verifyCustomerToken],
   System.ProductsController.getAllWishlistProducts
 )
 
