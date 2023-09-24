@@ -97,7 +97,7 @@ class ProductsController {
           description: product.Description,
           price: product.Price,
           discount: product.Discount,
-          images: images,
+          images: images || [],
           ...(userId && {
             isWishlisted: wishlistStatusMap[product.ProductID],
           }),
@@ -115,7 +115,62 @@ class ProductsController {
     }
   }
 
-  static getAllWishlistProducts() {}
+  static async getRecommendedProducts() {}
+
+  static async getAllWishlistProducts(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization || ''
+      const { customerId } = ValidatorController.getCustomerTokenData(
+        token,
+        res
+      )
+
+      // Step 1: Get all wishlist items for the customer
+      const wishlists = await WishlistModel.findAll({
+        where: {
+          CustomerID: customerId,
+        },
+      })
+
+      // Step 2: Extract unique product IDs from the wishlist items
+      const productIds = wishlists.map(wishlistItem => wishlistItem.ProductID)
+
+      // Step 3: Query the StoreProductModel to fetch product data for the extracted product IDs
+      const products = await StoreProductModel.findAll({
+        where: {
+          productId: productIds,
+        },
+      })
+
+      const dataTobeSent = products.map(product => {
+        const images = product.Images?.map(e => {
+          return (
+            baseURL + '/api/v1/partner-store/product/store-product-image/' + e
+          )
+        })
+
+        return {
+          productId: product.ProductID,
+          productName: product.ProductName,
+          description: product.Description,
+          price: product.Price,
+          discount: product.Discount,
+          images: images || [],
+        }
+      })
+
+      res.status(200).json({
+        code: 200,
+        message: 'Любимые продукты успешно получены!',
+        payload: dataTobeSent,
+      })
+    } catch (error) {
+      console.log(error)
+      return res
+        .status(500)
+        .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
+    }
+  }
 
   static async productAndWishlist(req: Request, res: Response) {
     try {
@@ -276,16 +331,53 @@ class ProductsController {
         res
       )
 
-      const cartProducts = await CartItemsModel.findAll({
+      // Step 1: Get all cart items for the customer
+      const cartItems = await CartItemsModel.findAll({
         where: {
           CustomerID: customerId,
         },
       })
 
+      // Step 2: Extract unique product IDs and quantities from cart items
+      const productData = cartItems.map(cartItem => ({
+        productId: cartItem.ProductID,
+        quantity: cartItem.Quantity,
+      }))
+
+      // Step 3: Query the StoreProductModel to fetch product data for the extracted product IDs
+      const products = await StoreProductModel.findAll({
+        where: {
+          productId: productData.map(item => item.productId),
+        },
+      })
+
+      const dataTobeSent = products.map(product => {
+        const images = product.Images?.map(e => {
+          return (
+            baseURL + '/api/v1/partner-store/product/store-product-image/' + e
+          )
+        })
+
+        return {
+          productId: product.ProductID,
+          productName: product.ProductName,
+          description: product.Description,
+          price: product.Price,
+          discount: product.Discount,
+          images: images || [],
+        }
+      })
+
+      // Step 4: Combine product data with quantities
+      const cartProductData = productData.map(item => ({
+        ...dataTobeSent.find(product => product.productId === item.productId),
+        quantity: item.quantity,
+      }))
+
       res.status(200).json({
         code: 200,
         message: 'Продукты успешно получены!',
-        payload: cartProducts,
+        payload: cartProductData,
       })
     } catch (error) {
       console.log(error)
