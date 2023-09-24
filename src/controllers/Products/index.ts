@@ -162,7 +162,10 @@ class ProductsController {
       res.status(200).json({
         code: 200,
         message: 'Любимые продукты успешно получены!',
-        payload: dataTobeSent,
+        payload: {
+          totalProducts: dataTobeSent.length,
+          productData: dataTobeSent,
+        },
       })
     } catch (error) {
       console.log(error)
@@ -377,7 +380,10 @@ class ProductsController {
       res.status(200).json({
         code: 200,
         message: 'Продукты успешно получены!',
-        payload: cartProductData,
+        payload: {
+          totalProducts: cartProductData.length,
+          productData: cartProductData,
+        },
       })
     } catch (error) {
       console.log(error)
