@@ -50,6 +50,8 @@ const Api = {
 
       addProductToCart: '/api/v1/market/products/add-product-to-cart',
       getCartProducts: '/api/v1/market/products/get-cart-products',
+      removeProductsFromCart:
+        '/api/v1/market/products/remove-product-from-cart',
     },
   },
 }

@@ -5,6 +5,7 @@ import { Op } from 'sequelize'
 import ValidatorController from '../validators'
 
 class ProductsController {
+  // get all main products
   static async getAllProducts(req: Request, res: Response) {
     try {
       const {
@@ -117,6 +118,7 @@ class ProductsController {
 
   static async getRecommendedProducts() {}
 
+  // get all wishlist products
   static async getAllWishlistProducts(req: Request, res: Response) {
     try {
       const token = req.headers.authorization || ''
@@ -175,6 +177,7 @@ class ProductsController {
     }
   }
 
+  // add and remove products to the wish list
   static async productAndWishlist(req: Request, res: Response) {
     try {
       const { productId } = req.query
@@ -242,6 +245,7 @@ class ProductsController {
     }
   }
 
+  // add product to the cart
   static async addProductToCart(req: Request, res: Response) {
     try {
       const { productId, quantity } = req.query
@@ -326,6 +330,7 @@ class ProductsController {
     }
   }
 
+  // this is get all cart products
   static async getCartProduct(req: Request, res: Response) {
     try {
       const token = req.headers.authorization || ''
@@ -392,8 +397,61 @@ class ProductsController {
         .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
     }
   }
+  static async removeProductsFromCart(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization || ''
+      const { customerId } = ValidatorController.getCustomerTokenData(
+        token,
+        res
+      )
 
-  static async removeProductFromCart() {}
+      const { productIds } = req.body
+
+      const validation = ValidatorController.validateRequiredFields(productIds)
+
+      if (!validation.valid) {
+        return res.status(400).json({
+          code: 400,
+          message: validation.error,
+        })
+      }
+
+      // Убедитесь, что productIds - это массив, прежде чем продолжить
+      if (!Array.isArray(productIds) || productIds.length === 0) {
+        return res.status(400).json({
+          code: 400,
+          message:
+            'Предоставлен неверный или пустой массив идентификаторов продуктов в запросе!',
+        })
+      }
+
+      // Используйте метод destroy с условием where для удаления продуктов по их идентификаторам
+      const removedProductCount = await CartItemsModel.destroy({
+        where: {
+          CustomerID: customerId,
+          ProductID: productIds, // Предполагается, что productIds - это массив
+        },
+      })
+
+      if (removedProductCount > 0) {
+        return res.status(200).json({
+          code: 200,
+          message: 'Продукты успешно удалены!',
+        })
+      } else {
+        return res.status(400).json({
+          code: 400,
+          message:
+            'В корзине не найдено соответствующих продуктов для удаления!',
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      return res
+        .status(500)
+        .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
+    }
+  }
 }
 
 export default ProductsController

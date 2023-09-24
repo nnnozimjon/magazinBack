@@ -131,6 +131,13 @@ Router.get(
   [verifyCustomerToken],
   System.ProductsController.getCartProduct
 )
+
+Router.delete(
+  Api.market.products.removeProductsFromCart,
+  [verifyCustomerToken],
+  System.ProductsController.removeProductsFromCart
+)
+
 // -- -- -- Product Wishlist API -- -- --
 Router.get(
   Api.market.products.getAllWishlistProducts,
