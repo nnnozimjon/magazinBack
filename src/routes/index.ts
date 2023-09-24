@@ -126,6 +126,11 @@ Router.post(
   System.ProductsController.addProductToCart
 )
 
+Router.get(
+  Api.market.products.getCartProducts,
+  [verifyCustomerToken],
+  System.ProductsController.getCartProduct
+)
 // -- -- -- Product Wishlist API -- -- --
 Router.get(
   Api.market.products.getAllWishlistProducts,

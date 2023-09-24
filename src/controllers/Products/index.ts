@@ -268,6 +268,33 @@ class ProductsController {
     }
   }
 
+  static async getCartProduct(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization || ''
+      const { customerId } = ValidatorController.getCustomerTokenData(
+        token,
+        res
+      )
+
+      const cartProducts = await CartItemsModel.findAll({
+        where: {
+          CustomerID: customerId,
+        },
+      })
+
+      res.status(200).json({
+        code: 200,
+        message: 'Продукты успешно получены!',
+        payload: cartProducts,
+      })
+    } catch (error) {
+      console.log(error)
+      return res
+        .status(500)
+        .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
+    }
+  }
+
   static async removeProductFromCart() {}
 }
 
