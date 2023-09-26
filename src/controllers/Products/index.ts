@@ -397,6 +397,7 @@ class ProductsController {
         .json({ code: 500, message: 'Внутренняя ошибка сервера!' })
     }
   }
+
   static async removeProductsFromCart(req: Request, res: Response) {
     try {
       const token = req.headers.authorization || ''
