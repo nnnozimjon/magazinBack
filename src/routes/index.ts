@@ -21,15 +21,22 @@ Router.use(
 Router.post(Api.auth.loginCustomer, System.UserAuth.loginCustomer)
 Router.post(Api.auth.registerCustomer, System.UserAuth.registerCustomer)
 
+// Client profile data
+Router.get(
+  Api.customer.profile,
+  [verifyCustomerToken],
+  System.CustomerController.profileData
+)
+
 // Affiliate Auth API configuration
 Router.post(Api.auth.loginAffiliate, System.UserAuth.loginAffiliate)
+
 Router.post(
   Api.auth.registerAffiliate,
   System.UserAuth.registerAffiliatePartner
 )
 
-// Partner Store Auth API configuration
-Router.post(Api.auth.loginPartnerStore, System.UserAuth.loginPartnerStore)
+// Partner Store Auth API configurationsuth.loginPartnerStore)
 Router.post(
   Api.auth.registerPartnerStore,
   [
@@ -80,6 +87,7 @@ Router.get(
   Api.partnerStore.profile.storeImage,
   System.ImageController.partnerStoreImage
 )
+
 Router.get(
   Api.partnerStore.profile.getStoreData,
   [verifyToken],

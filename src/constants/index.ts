@@ -13,6 +13,10 @@ const Api = {
     registerPartnerStore: '/api/v1/partner-stores/register', // DONE
   },
 
+  customer: {
+    profile: '/api/v1/customer/get-profile-data',
+  },
+
   dashboard: {
     partnerStores: {
       soldProductsCount: '/api/v1/dashboard/partner-stores/sold-products-count',
