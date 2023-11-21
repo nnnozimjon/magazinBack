@@ -1,5 +1,3 @@
-import database from './db'
-
-const config = { database }
+const config = {}
 
 export default config

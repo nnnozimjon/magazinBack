@@ -1,11 +1,162 @@
-import express, { Response, Request } from 'express'
+import express from 'express'
+import Service from '../services'
+import swaggerUi from 'swagger-ui-express'
+import { swaggerJSON } from '../docs'
 import System from '../controllers'
 import Api from '../constants'
+import verifyToken from '../controllers/Token'
+import verifyCustomerToken from '../controllers/Token/customerToken'
 
+// Router
 const Router = express.Router()
 
-Router.get('/', (req: Request, res: Response) => {
-  res.send('Production!')
-})
+// Swagger API configuration!
+Router.use(
+  '/docs',
+  swaggerUi.serveFiles(swaggerJSON),
+  swaggerUi.setup(swaggerJSON, { explorer: true })
+)
+
+// Client Auth API configuration
+Router.post(Api.auth.loginCustomer, System.UserAuth.loginCustomer)
+Router.post(Api.auth.registerCustomer, System.UserAuth.registerCustomer)
+
+// Client profile data
+Router.get(
+  Api.customer.profile,
+  [verifyCustomerToken],
+  System.CustomerController.profileData
+)
+
+// Affiliate Auth API configuration
+Router.post(Api.auth.loginAffiliate, System.UserAuth.loginAffiliate)
+
+Router.post(
+  Api.auth.registerAffiliate,
+  System.UserAuth.registerAffiliatePartner
+)
+
+// Partner Store Auth API configurationsuth.loginPartnerStore)
+Router.post(
+  Api.auth.registerPartnerStore,
+  [
+    // Service.FileDownload.AuthFiles().any(),
+    Service.FileDownload.AuthFiles().fields([
+      { name: 'storeBrandLogo', maxCount: 1 },
+      { name: 'storeHeaderPhoto', maxCount: 1 },
+    ]),
+  ],
+  System.UserAuth.registerPartnerStore
+)
+
+// Partner Store Products API
+Router.post(
+  Api.partnerStore.product.createProduct,
+  [
+    verifyToken,
+    Service.FileDownload.ProductPhoto().fields([{ name: 'file', maxCount: 3 }]),
+  ],
+  System.StoreProduct.createProduct
+)
+
+Router.put(
+  Api.partnerStore.product.editProduct,
+  [verifyToken],
+  System.StoreProduct.editProduct
+)
+
+Router.delete(
+  Api.partnerStore.product.deleteProduct,
+  [verifyToken],
+  System.StoreProduct.deleteProduct
+)
+
+Router.get(
+  Api.partnerStore.product.getAllProducts,
+  [verifyToken],
+  System.StoreProduct.getProducts
+)
+
+Router.get(
+  Api.partnerStore.product.storeProductImage,
+  System.ImageController.storeProductImage
+)
+
+// Partner Store Profile API
+Router.get(
+  Api.partnerStore.profile.storeImage,
+  System.ImageController.partnerStoreImage
+)
+
+Router.get(
+  Api.partnerStore.profile.getStoreData,
+  [verifyToken],
+  System.StoreController.getUserData
+)
+
+Router.put(
+  Api.partnerStore.profile.editStore,
+  [verifyToken],
+  System.StoreController.editStore
+)
+
+Router.delete(
+  Api.partnerStore.profile.deleteStore,
+  [verifyToken],
+  System.StoreController.deleteStore
+)
+
+// Partner Store Dashboard API
+Router.get(
+  Api.dashboard.partnerStores.soldProductsCount,
+  [verifyToken],
+  System.Dashboard.getSoldProductQuantity
+)
+
+// Dushanbe Marketplace Product API
+Router.get(
+  Api.market.products.getAllProducts,
+  System.ProductsController.getAllProducts
+)
+
+// Categories API ------------------
+
+Router.get(
+  Api.market.categories.getAll,
+  System.CategoriesController.getCategoriesWithSubcategories
+)
+
+// Add Product to Cart API ----------------
+
+Router.post(
+  Api.market.products.addProductToCart,
+  [verifyCustomerToken],
+  System.ProductsController.addProductToCart
+)
+
+Router.get(
+  Api.market.products.getCartProducts,
+  [verifyCustomerToken],
+  System.ProductsController.getCartProduct
+)
+
+Router.delete(
+  Api.market.products.removeProductsFromCart,
+  [verifyCustomerToken],
+  System.ProductsController.removeProductsFromCart
+)
+
+// -- -- -- Product Wishlist API -- -- --
+Router.get(
+  Api.market.products.getAllWishlistProducts,
+  [verifyCustomerToken],
+  System.ProductsController.getAllWishlistProducts
+)
+
+Router.post(
+  Api.market.products.productAndWishlist,
+  [verifyCustomerToken],
+  System.ProductsController.productAndWishlist
+)
 
 export default Router

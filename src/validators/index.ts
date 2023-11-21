@@ -1,5 +1,3 @@
-import database from './db'
-
-const validate = { database }
+const validate = {}
 
 export { validate }

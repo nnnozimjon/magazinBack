@@ -1,6 +1,5 @@
 import mysql from 'mysql2'
 import config from '../../config'
 
-const dbConnection = mysql.createPool(config.database)
-
+const dbConnection = {}
 export default dbConnection

@@ -7,3 +7,6 @@ build
 
 # Ignore other environment-related files or directories
 env/
+
+/src/assets/partnerStoresImage/
+/src/assets/storeProductsImages/
