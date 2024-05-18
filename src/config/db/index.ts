@@ -1,4 +1,4 @@
-import { DB } from '@app/interfaces/mysql'
+import { Sequelize } from 'sequelize'
 import dotenv from 'dotenv'
 import path from 'path'
 
@@ -6,12 +6,12 @@ const { parsed } = dotenv.config({
   path: path.resolve(__dirname, '../../../', '.env'),
 })
 
-const database: DB = {
+const sequelize = new Sequelize({
+  dialect: 'mysql',
   host: parsed!.HOST,
-  user: parsed!.USER,
-  password: parsed!.PASSWORD,
   database: parsed!.DATABASE,
-  timezone: parsed!.TIMEZONE,
-}
+  username: parsed!.USER,
+  password: parsed!.PASSWORD,
+})
 
-export default database
+export default sequelize
